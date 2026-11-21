@@ -76,7 +76,7 @@ python3 -B -m unittest discover -s tests -v
 python3 -B firmware/probar.py
 ```
 
-La suite HTTP utiliza servidores y bases temporales. La regresión de firmware necesita un compilador C++17 y los sustitutos de hardware del proyecto en `../avance nuevo/tests`. Esa carpeta se usa para repetir los ensayos del proyecto anterior. La web y el sketch adaptado se ejecutan independientemente.
+La suite HTTP utiliza servidores y bases temporales. La regresión de firmware necesita un compilador C++17 y los sustitutos de hardware del proyecto en `firmware/tests`. Esa carpeta se usa para repetir los ensayos del proyecto anterior. La web y el sketch adaptado se ejecutan independientemente.
 
 Las pruebas de navegador son opcionales para desarrollo. Con Node.js compatible con Playwright:
 

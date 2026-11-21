@@ -37,7 +37,7 @@ Edita la nueva copia. Escribe la red en `WIFI_SSID`, su clave en `WIFI_CLAVE`, e
 
 ## 3. Revisar el montaje y la calibración
 
-Antes de aplicar alimentación a las cargas, consulta el cableado, las adaptaciones ECHO y las fuentes en [la guía de montaje del proyecto](../../avance%20nuevo/GUIA_MONTAJE.txt). Este firmware conserva el pinout del ESP32 WROOM y la LCD paralela. Las mangueras, el filtro y la salida independiente de emergencia se verifican en el montaje.
+Antes de aplicar alimentación a las cargas, consulta el cableado, las adaptaciones ECHO y las fuentes en [la guía de montaje del proyecto](GUIA_MONTAJE.txt). Este firmware conserva el pinout del ESP32 WROOM y la LCD paralela. Las mangueras, el filtro y la salida independiente de emergencia se verifican en el montaje.
 
 En `Configuracion.h`, mide para cada punto la distancia del sensor al fondo y al nivel máximo útil. Actualiza `vacioCm`, `llenoCm` y los límites admisibles de la unidad instalada. Contrasta varias lecturas con una regla. Después marca en `RedConfig.h` únicamente las entradas correspondientes de `CALIBRACION_CONFIRMADA`, en el orden A1, A2, A3 y depósito. La geometría inicial del proyecto es orientativa. El servidor recibe la altura y la geometría de referencia. El porcentaje de altura útil se habilita por punto al confirmar la calibración.
 
@@ -82,7 +82,7 @@ Desde `WEB`, ejecuta lo siguiente con Python 3 y un compilador C++17 con sanitiz
 python3 firmware/probar.py
 ```
 
-La prueba emplea los sustitutos de hardware y la suite de regresión en `../avance nuevo/tests`, compila la copia de este sketch en cuatro perfiles y valida con el mismo contrato Python del servidor dieciséis mensajes del serializador C++. Comprueba la captura inicial, la geometría confirmada y provisional, la edad de muestra, el depósito ausente, la distancia de diagnóstico tras un eco fuera de rango y una medición caducada. La conexión Wi-Fi de una placa, los tiempos del circuito, la precisión, los mecanismos y la hidráulica requieren comprobación física.
+La prueba emplea los sustitutos de hardware y la suite de regresión en `firmware/tests`, compila la copia de este sketch en cuatro perfiles y valida con el mismo contrato Python del servidor dieciséis mensajes del serializador C++. Comprueba la captura inicial, la geometría confirmada y provisional, la edad de muestra, el depósito ausente, la distancia de diagnóstico tras un eco fuera de rango y una medición caducada. La conexión Wi-Fi de una placa, los tiempos del circuito, la precisión, los mecanismos y la hidráulica requieren comprobación física.
 
 Con Arduino CLI 1.5.1 y las dependencias indicadas se compilaron dos perfiles para `esp32:esp32:esp32`. La compilación sin credenciales ocupó 378 039 bytes de programa. La compilación con HTTPS habilitado, una CA y credenciales ficticias ocupó 1 057 007 bytes de programa y 49 484 bytes de variables globales. El tamaño varía con la cadena de certificados y la configuración de placa.
 

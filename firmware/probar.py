@@ -8,7 +8,7 @@ import sys
 import tempfile
 
 raiz = Path(__file__).resolve().parent
-base = raiz.parent.parent / "avance nuevo" / "tests"
+base = raiz / "tests"
 sys.path.insert(0, str(raiz.parent / "server"))
 from protocol import validate
 

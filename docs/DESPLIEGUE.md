@@ -141,3 +141,12 @@ PY
 Guarda las copias en almacenamiento privado y conserva una copia protegida de las credenciales por separado. Para restaurar, detén el servicio, conserva la carpeta de datos existente y coloca ambas bases verificadas en un directorio nuevo, con permisos para `pluvia`. Selecciónalo en `DATA_DIR` y reinicia el servicio. Así la restauración usa las bases de la copia y evita reutilizar diarios WAL de otra versión. Comprueba el historial, los reconocimientos y una solicitud de referencia antes de retirar la copia anterior.
 
 Se ensayaron localmente el arranque de Waitress con estos parámetros, la protección del acceso real, una sesión de demo por SSE y la recuperación de una solicitud tras copiar las dos bases en línea. El alta del dominio, Caddy en el servidor público y la conexión del ESP32 físico quedan para el alojamiento y el montaje de destino.
+
+## Vercel con API persistente en Render
+
+El repositorio incluye la configuración de ambos servicios. Render Starter y el disco persistente tienen coste. Revisa el importe que muestra Render antes de crear los recursos.
+
+1. Importa el repositorio en Render como Blueprint. Reserva el dominio de producción de Vercel e indica su origen exacto (incluido HTTPS) como `PUBLIC_WEB_ORIGIN`. Este permiso se utiliza exclusivamente para el formulario público.
+2. Copia el origen HTTPS asignado por Render. En Vercel importa el mismo repositorio con la raíz predeterminada e introduce ese origen en `PLUVIA_API_ORIGIN`. Despliega la rama main.
+3. Abre la web de Vercel y entra en Monitoreo. El panel, las cookies, el CSV y el flujo SSE usan directamente el dominio del backend. Las solicitudes comerciales de la portada atraviesan una reescritura al backend.
+4. En el ESP32 configura el endpoint HTTPS de Render terminado en `/api/v1/telemetry` y el secreto DEVICE_TOKEN generado para ese servicio. La contraseña del monitor se consulta por separado en las variables privadas de Render.

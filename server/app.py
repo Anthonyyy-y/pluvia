@@ -2,6 +2,7 @@
 import hmac
 import json
 import logging
+import os
 import mimetypes
 import re
 import secrets
@@ -126,7 +127,8 @@ def route(app, env):
     peer = env.get("REMOTE_ADDR","local")
     if method == "POST":
         origin = env.get("HTTP_ORIGIN")
-        if origin and urlsplit(origin).netloc != env.get("HTTP_HOST"):
+        public_contact = action == "contact" and origin == os.environ.get("PUBLIC_WEB_ORIGIN")
+        if origin and not public_contact and urlsplit(origin).netloc != env.get("HTTP_HOST"):
             raise Problem(403,"Origen web no autorizado.")
         data = read_object(env)
         if action == "telemetry":

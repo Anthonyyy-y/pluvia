@@ -1,0 +1,11 @@
+{
+  "name": "pluvia-pruebas-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "probar:web": "node tests/navegador.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

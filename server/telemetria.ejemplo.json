@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "device_id": "pluvia-demo",
+  "source": "SIMULACION",
+  "boot_id": "arranque-ejemplo",
+  "seq": 7,
+  "uptime_ms": 14000,
+  "points": {
+    "A1": {
+      "installed": true,
+      "valid": true,
+      "state": "NORMAL",
+      "reason": null,
+      "distance_cm": 49.8,
+      "height_cm": 10.2,
+      "height_pct": 34.02,
+      "age_ms": 110,
+      "calibration": {
+        "confirmed": true,
+        "empty_cm": 60,
+        "full_cm": 30
+      }
+    },
+    "A2": {
+      "installed": true,
+      "valid": true,
+      "state": "NORMAL",
+      "reason": null,
+      "distance_cm": 16.42,
+      "height_cm": 3.58,
+      "height_pct": 22.34,
+      "age_ms": 110,
+      "calibration": {
+        "confirmed": true,
+        "empty_cm": 20,
+        "full_cm": 4
+      }
+    },
+    "A3": {
+      "installed": true,
+      "valid": true,
+      "state": "NORMAL",
+      "reason": null,
+      "distance_cm": 15.9,
+      "height_cm": 4.1,
+      "height_pct": 25.66,
+      "age_ms": 110,
+      "calibration": {
+        "confirmed": true,
+        "empty_cm": 20,
+        "full_cm": 4
+      }
+    },
+    "DEPOSITO": {
+      "installed": false,
+      "valid": false,
+      "state": "ERROR",
+      "reason": "SIN_SENSOR",
+      "distance_cm": null,
+      "height_cm": null,
+      "height_pct": null,
+      "age_ms": null,
+      "calibration": {
+        "confirmed": false,
+        "empty_cm": null,
+        "full_cm": null
+      }
+    }
+  },
+  "outputs": {
+    "motor": false,
+    "gate_deg": 0,
+    "drain": false,
+    "irrigation": false,
+    "stage": "REPOSO"
+  },
+  "tank": {
+    "can_receive": false,
+    "can_irrigate": false
+  },
+  "light": {
+    "adc": 1106,
+    "daylight": true
+  },
+  "network": {
+    "rssi_dbm": -51
+  }
+}

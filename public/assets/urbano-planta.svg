@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+<title id="title">Circunvalación Sur. Planta de la cuadra ilustrativa.</title>
+<desc id="desc">Tres rejillas A1, A2 y A3 se alinean en la cuneta de la calzada, al pie de un bordillo continuo. Frente a A2, un parterre ocupa una parte de la vereda y contiene plantas ornamentales y un dispersor.</desc>
+<defs>
+  <pattern id="losas" width="108" height="64" patternUnits="userSpaceOnUse"><rect width="108" height="64" fill="#d8dcd3"/><path d="M0 0H108M0 0V64" stroke="#b7c0b5" fill="none" stroke-width="2"/><path d="M0 32H108M54 32V64" stroke="#c6cdc3" fill="none"/></pattern>
+  <pattern id="asfalto" width="17" height="13" patternUnits="userSpaceOnUse"><rect width="17" height="13" fill="#384440"/><path d="M2 4h1m6 6h1m4-8h1" stroke="#a4b2aa" opacity=".24"/></pattern>
+  <pattern id="cuneta" width="28" height="20" patternUnits="userSpaceOnUse"><rect width="28" height="20" fill="#819089"/><path d="M0 0v20" stroke="#75827b"/></pattern>
+  <pattern id="rejilla" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="#283630"/><path d="M0 0h7" stroke="#96a49a" stroke-width="3"/></pattern>
+  <pattern id="hierba" width="24" height="19" patternUnits="userSpaceOnUse"><rect width="24" height="19" fill="#8ca76d"/><path d="m2 8 1-2m12 8 2-2m5-10 1-2" stroke="#607d4e" stroke-width="1.2"/><path d="m5 15 1-2m6-9 1-2" stroke="#c1c995"/></pattern>
+  <g id="sumidero"><rect x="-45" y="-12" width="90" height="24" rx="2" fill="#5b6860" stroke="#303d36" stroke-width="2"/><rect x="-40" y="-9" width="80" height="18" fill="url(#rejilla)"/><path d="M-12-9v18m27-18v18" stroke="#78897d" stroke-width="3"/></g>
+  <g id="hoja"><path d="M0 0Q-9-12-3-20Q5-16 0 0Z" fill="#3d6852"/><path d="M0 0Q0-12 9-17Q12-7 0 0Z" fill="#587f57"/><path d="M0 0Q11-6 17-3Q13 4 0 0Z" fill="#78975f"/><path d="M0 0Q14 4 12 12Q5 10 0 0Z" fill="#496f50"/><path d="M0 0Q4 11-3 17Q-6 10 0 0Z" fill="#668753"/><path d="M0 0Q-10 12-17 9Q-13 1 0 0Z" fill="#87a569"/><path d="M0 0Q-10 0-16-8Q-9-11 0 0Z" fill="#517952"/></g>
+  <g id="flores"><circle cx="-6" cy="-3" r="6" fill="#93a678"/><circle cx="2" cy="-7" r="6" fill="#607e53"/><circle cx="8" cy="3" r="7" fill="#7e9a65"/><circle cx="-3" cy="7" r="6" fill="#71905d"/><g fill="#d8b293"><circle cx="-3" cy="-4" r="2.2"/><circle cx="6" cy="0" r="2"/><circle cx="-1" cy="5" r="1.7"/></g></g>
+</defs>
+<rect width="960" height="540" fill="#f5f7ef"/>
+<g font-family="Inter,Arial,sans-serif" fill="#183b2c">
+  <text x="44" y="45" font-size="31" font-weight="600">La cuadra en superficie</text><text x="916" y="42" text-anchor="end" font-size="16">Circunvalación Sur</text>
+  <g id="vereda"><rect x="44" y="78" width="872" height="150" fill="url(#losas)"/><rect x="44" y="226" width="872" height="10" fill="#e6e6d9"/><path d="M44 237H916" stroke="#69796d" stroke-width="3"/>
+  <text x="62" y="111" font-size="15" fill="#44584d" letter-spacing="1.2">VEREDA</text></g>
+  <g id="parterre"><rect x="339" y="126" width="284" height="89" rx="10" fill="#acb6a2" stroke="#8a9789"/><rect x="343" y="130" width="276" height="81" rx="7" fill="url(#hierba)"/>
+  <use href="#hoja" transform="translate(368 159) rotate(32) scale(.93)"/><use href="#hoja" transform="translate(407 187) rotate(17) scale(.85)"/><use href="#hoja" transform="translate(456 150) rotate(-21) scale(1.05)"/><use href="#hoja" transform="translate(521 189) rotate(12) scale(.8)"/><use href="#hoja" transform="translate(589 151) rotate(-15) scale(.88)"/><use href="#flores" transform="translate(410 151)"/><use href="#flores" transform="translate(480 186)"/><use href="#flores" transform="translate(573 187)"/><use href="#flores" transform="translate(377 191) scale(.7)"/>
+  <text x="340" y="113" font-size="17" font-weight="600">Parterre ornamental</text></g>
+  <g id="dispersor"><circle cx="537" cy="162" r="9" fill="#495d51" stroke="#e0e8cc" stroke-width="2.5"/><circle cx="537" cy="162" r="3" fill="#b6c5b9"/><path d="M546 162H620l25-34h19" fill="none" stroke="#2b5b4b" stroke-width="1.6"/><text x="671" y="132" font-size="17" font-weight="600">Dispersor</text></g>
+  <g id="calzada"><rect x="44" y="238" width="872" height="182" fill="url(#asfalto)"/><rect x="44" y="238" width="872" height="30" fill="url(#cuneta)"/><path d="M44 392H916" stroke="#e4dfc8" stroke-width="4" stroke-dasharray="91 54"/><text x="62" y="366" font-size="15" fill="#e3e9e0" letter-spacing="1.2">CALZADA</text></g>
+  <g id="rejillas" fill="#eef4e9" text-anchor="middle" font-size="18" font-weight="600"><g transform="translate(206 253)"><use href="#sumidero"/><path d="M0 14v18" stroke="#a7bfb0"/><text y="53">A1</text></g><g transform="translate(480 253)"><use href="#sumidero"/><path d="M0 14v18" stroke="#a7bfb0"/><text y="53">A2</text></g><g transform="translate(754 253)"><use href="#sumidero"/><path d="M0 14v18" stroke="#a7bfb0"/><text y="53">A3</text></g></g>
+  <text x="44" y="458" font-size="19" font-weight="600">Tres entradas de agua a ras de la cuneta.</text>
+  <text x="44" y="487" font-size="17" fill="#4d6254">El parterre más próximo recibe el riego por una conducción enterrada.</text>
+  <path d="M44 507H916" stroke="#bfcebc"/><text x="44" y="527" font-size="13" fill="#506757">Prototipo de drenaje pluvial · Distribución ilustrativa</text>
+</g></svg>

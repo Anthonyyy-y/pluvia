@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1060" viewBox="0 0 1600 1060" role="img" aria-labelledby="titulo descripcion">
+<title id="titulo">Cortes de montaje de la maqueta PIS</title><desc id="descripcion">Corte frontal con alcantarillas elevadas, sensor A1 en torre, motor seco, colector y filtro inferiores. Corte posterior con depósito, bomba de riego y caja seca.</desc>
+<defs>
+        <marker id="agua" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#1486b8"/></marker>
+        <marker id="riego" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#087f82"/></marker>
+        <marker id="aux" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#c66a22"/></marker>
+        <marker id="bomba" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#8057ac"/></marker>
+        </defs>
+<rect x="0" y="0" width="1600" height="1060" rx="0" fill="#ffffff" stroke="none" stroke-width="2"/>
+<text x="60" y="53" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#087f82" font-weight="700" text-anchor="start">02 / ALTURAS Y ACCESOS</text>
+<text x="60" y="103" font-family="Arial, Helvetica, sans-serif" font-size="38" fill="#183444" font-weight="700" text-anchor="start">Dos cortes para montar sin adivinar</text>
+<text x="60" y="143" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#56707b" font-weight="400" text-anchor="start">Alzados esquemáticos: las alturas propuestas se comprueban primero con recipientes y sensores reales.</text>
+<text x="70" y="202" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#087f82" font-weight="700" text-anchor="start">LADO A / FRENTE</text>
+<rect x="110" y="468.2" width="970" height="22" rx="2" fill="#bdcbd1" stroke="#6f8791" stroke-width="2"/>
+<rect x="130" y="490.2" width="20" height="115" rx="2" fill="#d5dfe3" stroke="#8199a3" stroke-width="2"/>
+<rect x="470" y="490.2" width="20" height="115" rx="2" fill="#d5dfe3" stroke="#8199a3" stroke-width="2"/>
+<rect x="1000" y="490.2" width="20" height="115" rx="2" fill="#d5dfe3" stroke="#8199a3" stroke-width="2"/>
+<path d="M95 605H1095" fill="none" stroke="#183444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="110" y="633" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#56707b" font-weight="400" text-anchor="start">Base z = 0 cm</text>
+<rect x="210" y="354.2" width="240" height="114" rx="3" fill="#fff" stroke="#183444" stroke-width="2"/>
+<rect x="213" y="399.79999999999995" width="234" height="65" rx="0" fill="#d7edf9" stroke="none" stroke-width="2"/>
+<path d="M214 399.79999999999995H446" fill="none" stroke="#1486b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="330.0" y="451.2" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#183444" font-weight="700" text-anchor="middle">A1</text>
+<text x="330.0" y="386.79999999999995" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#1486b8" font-weight="400" text-anchor="middle">máx. útil 12 cm</text>
+<rect x="570" y="354.2" width="168" height="114" rx="3" fill="#fff" stroke="#183444" stroke-width="2"/>
+<rect x="573" y="399.79999999999995" width="162" height="65" rx="0" fill="#d7edf9" stroke="none" stroke-width="2"/>
+<path d="M574 399.79999999999995H734" fill="none" stroke="#1486b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="654.0" y="451.2" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#183444" font-weight="700" text-anchor="middle">A2</text>
+<text x="654.0" y="386.79999999999995" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#1486b8" font-weight="400" text-anchor="middle">máx. útil 12 cm</text>
+<rect x="850" y="354.2" width="168" height="114" rx="3" fill="#fff" stroke="#183444" stroke-width="2"/>
+<rect x="853" y="399.79999999999995" width="162" height="65" rx="0" fill="#d7edf9" stroke="none" stroke-width="2"/>
+<path d="M854 399.79999999999995H1014" fill="none" stroke="#1486b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="934.0" y="451.2" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#183444" font-weight="700" text-anchor="middle">A3</text>
+<text x="934.0" y="386.79999999999995" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#1486b8" font-weight="400" text-anchor="middle">máx. útil 12 cm</text>
+<path d="M180 468.2V228.8H352" fill="none" stroke="#56707b" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="304" y="228.2" width="48" height="15" rx="3" fill="#e3e9ed" stroke="#183444" stroke-width="2"/>
+<path d="M328 243.2V399.79999999999995" fill="none" stroke="#56707b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5"/>
+<text x="375" y="236" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#183444" font-weight="700" text-anchor="start">S1 / JSN</text>
+<text x="375" y="262" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#56707b" font-weight="400" text-anchor="start">soporte regulable</text>
+<path d="M525 240.2V399.79999999999995 M518 240.2H532 M518 399.79999999999995H532" fill="none" stroke="#8057ac" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="536" y="319" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#8057ac" font-weight="400" text-anchor="start">28 cm*</text>
+<rect x="627" y="342.2" width="54" height="14" rx="3" fill="#e3e9ed" stroke="#183444" stroke-width="2"/>
+<circle cx="642" cy="349.2" r="6" fill="#9db4be" stroke="#183444" stroke-width="1"/>
+<circle cx="666" cy="349.2" r="6" fill="#9db4be" stroke="#183444" stroke-width="1"/>
+<path d="M654 358.2V399.79999999999995" fill="none" stroke="#56707b" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 4"/>
+<rect x="907" y="342.2" width="54" height="14" rx="3" fill="#e3e9ed" stroke="#183444" stroke-width="2"/>
+<circle cx="922" cy="349.2" r="6" fill="#9db4be" stroke="#183444" stroke-width="1"/>
+<circle cx="946" cy="349.2" r="6" fill="#9db4be" stroke="#183444" stroke-width="1"/>
+<path d="M934 358.2V399.79999999999995" fill="none" stroke="#56707b" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 4"/>
+<text x="790" y="336" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#56707b" font-weight="400" text-anchor="middle">S2 / S3: tapas secas y desmontables</text>
+<rect x="222" y="326.5" width="32" height="26" rx="3" fill="#f6eadc" stroke="#c66a22" stroke-width="2"/>
+<text x="214" y="316.5" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#c66a22" font-weight="400" text-anchor="start">M seco</text>
+<path d="M238 352.5V422.6" fill="none" stroke="#c66a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M222 422.6H254" fill="none" stroke="#c66a22" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="216" y="411.2" width="48" height="45" rx="0" fill="none" stroke="#56707b" stroke-width="2" stroke-dasharray="4 3"/>
+<path d="M1016 451.1L144 462.5L144 468.2" fill="none" stroke="#1486b8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#agua)"/>
+<text x="670" y="544" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1486b8" font-weight="400" text-anchor="middle">Canaleta abierta detrás; ramales con caída libre hacia F</text>
+<path d="M147 468.2L79 468.2" fill="none" stroke="#1486b8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#agua)"/>
+<text x="70" y="493" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#1486b8" font-weight="400" text-anchor="start">a F</text>
+<path d="M1110 468.2V605 M1104 468.2H1116 M1104 605H1116" fill="none" stroke="#56707b" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1125" y="559" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#56707b" font-weight="400" text-anchor="start">24 cm</text>
+<rect x="1200" y="212" width="340" height="413" rx="12" fill="#f4f7f8" stroke="none" stroke-width="2"/>
+<text x="1224" y="247" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">COTAS DE REFERENCIA</text>
+<text x="1224" y="274" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">Recipientes: 20 cm de alto.</text>
+<text x="1224" y="301" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">Fondo sobre tarima: z = 24.</text>
+<text x="1224" y="328" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">Agua útil máxima: z = 36.</text>
+<text x="1224" y="355" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">Borde de recipiente: z = 44.</text>
+<text x="1224" y="382" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start"></text>
+<text x="1224" y="409" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">S1: cara a z = 64 cm*.</text>
+<text x="1224" y="436" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">D0 = 40 / Dlleno = 28 cm*.</text>
+<text x="1224" y="463" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">S2/S3: cara a z = 44 cm.</text>
+<text x="1224" y="490" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">D0 = 20 / Dlleno = 8 cm.</text>
+<text x="1224" y="517" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start"></text>
+<text x="1224" y="544" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">*Ejemplo, no cota definitiva.</text>
+<text x="1224" y="571" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">Validar zona ciega y ecos.</text>
+<text x="70" y="689" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#087f82" font-weight="700" text-anchor="start">LADO B / POSTERIOR</text>
+<path d="M100 927H1135" fill="none" stroke="#183444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="146" y="815" width="265" height="112" rx="4" fill="#fff" stroke="#183444" stroke-width="2"/>
+<rect x="149" y="843" width="259" height="81" rx="0" fill="#d7edf9" stroke="none" stroke-width="2"/>
+<text x="278" y="889" font-family="Arial, Helvetica, sans-serif" font-size="21" fill="#183444" font-weight="700" text-anchor="middle">D / DEPÓSITO</text>
+<rect x="154" y="770" width="130" height="30" rx="3" fill="#fff2d9" stroke="#ba994a" stroke-width="2"/>
+<text x="219" y="790" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#183444" font-weight="400" text-anchor="middle">F / filtro</text>
+<path d="M320 745H218V769" fill="none" stroke="#1486b8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#agua)"/>
+<text x="326" y="750" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1486b8" font-weight="400" text-anchor="start">colector + P1</text>
+<path d="M218 800V816" fill="none" stroke="#1486b8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#agua)"/>
+<text x="138" y="839" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#1486b8" font-weight="400" text-anchor="start">Descarga libre</text>
+<rect x="352" y="896" width="39" height="26" rx="3" fill="#d9edeb" stroke="#087f82" stroke-width="2"/>
+<text x="371" y="915" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#183444" font-weight="400" text-anchor="middle">P2</text>
+<path d="M373 896V793H645V818" fill="none" stroke="#087f82" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#riego)"/>
+<rect x="580" y="821" width="210" height="34" rx="3" fill="#e6f3e8" stroke="#288354" stroke-width="2"/>
+<text x="685" y="811" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#288354" font-weight="400" text-anchor="middle">Bandeja verde + drenaje</text>
+<path d="M411 830H474V940H525" fill="none" stroke="#c66a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 5" marker-end="url(#aux)"/>
+<text x="438" y="915" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#c66a22" font-weight="400" text-anchor="start">rebose</text>
+<text x="532" y="946" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#c66a22" font-weight="400" text-anchor="start">a recipiente externo</text>
+<rect x="892" y="777" width="185" height="109" rx="5" fill="#e8edf3" stroke="#71869b" stroke-width="2"/>
+<text x="984" y="812" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#183444" font-weight="700" text-anchor="middle">CAJA SECA</text>
+<text x="984" y="842" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="middle">USB accesible</text>
+<rect x="900" y="886" width="16" height="41" rx="0" fill="#bdcbd1" stroke="#56707b" stroke-width="2"/>
+<rect x="1050" y="886" width="16" height="41" rx="0" fill="#bdcbd1" stroke="#56707b" stroke-width="2"/>
+<rect x="1200" y="699" width="340" height="263" rx="12" fill="#f4f7f8" stroke="none" stroke-width="2"/>
+<text x="1224" y="733" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">ESPACIO POSTERIOR</text>
+<text x="1224" y="758" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">F: entrada z ≈ 24 cm.</text>
+<text x="1224" y="783" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">F: salida libre z ≈ 20 cm.</text>
+<text x="1224" y="808" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">D: borde z = 16 cm.</text>
+<text x="1224" y="833" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">D: agua útil máx. = 12 cm.</text>
+<text x="1224" y="858" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">Rebose D: probar antes de usar.</text>
+<text x="1224" y="883" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">Cableado seco en canaleta.</text>
+<text x="1224" y="908" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">P2 sumergible solo si su ficha</text>
+<text x="1224" y="933" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#183444" font-weight="400" text-anchor="start">lo permite.</text>
+<path d="M60 994H1540" fill="none" stroke="#d2dfe4" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="60" y="1026" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#56707b" font-weight="400" text-anchor="start">Cotas propuestas para estudiar el montaje. No copiar estos ejemplos al firmware sin calibrar.</text>
+<text x="1540" y="1026" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#56707b" font-weight="400" text-anchor="end">PIS · 20 NOV 2026 · v01</text>
+</svg>

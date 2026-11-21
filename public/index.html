@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#132c29" />
+    <title>Pluvia · Drenaje pluvial inteligente</title>
+    <meta
+      name="description"
+      content="Explora una cuadra ilustrativa de Circunvalación Sur. Tres rejillas captan la lluvia y un circuito subterráneo lleva el agua filtrada al parterre de la vereda."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_EC" />
+    <meta property="og:title" content="Pluvia · Drenaje pluvial inteligente" />
+    <meta
+      property="og:description"
+      content="Una calle en superficie, tres alcantarillas bajo la calzada y un dispersor entre las plantas de la vereda. Explora el prototipo en 3D."
+    />
+    <link rel="icon" href="/brand.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/vendor/inter/inter-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/config.js"></script>
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#principal">Saltar al contenido</a>
+    <header class="header">
+      <div class="wrap navrow">
+        <a class="brand" href="#principal" aria-label="Inicio"
+          ><img src="/brand.svg" width="34" height="34" alt="" /><span
+            data-brand
+            >Pluvia</span
+          ></a
+        >
+        <nav id="main-nav" aria-label="Navegación principal">
+          <a href="#sistema">El sistema</a
+          ><a href="#explorador">Explorador 3D</a
+          ><a href="#materiales">Materiales</a
+          ><a href="#tecnica">Información técnica</a>
+        </nav>
+        <div class="nav-end">
+          <a class="btn btn-dark nav-panel" href="/monitoreo"
+            ><i data-icon="wave"></i> Monitoreo</a
+          ><button
+            class="mobile-menu icon-button"
+            type="button"
+            aria-label="Abrir menú"
+            aria-expanded="false"
+            aria-controls="main-nav"
+          >
+            <i data-icon="menu"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+    <main id="principal">
+      <section class="hero" aria-labelledby="titulo">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="wrap hero-layout">
+          <div class="hero-copy">
+            <p class="kicker hero-kicker">
+              <span class="signal"></span> Prototipo de drenaje urbano
+            </p>
+            <h1 id="titulo">Drenaje<br /><em>inteligente.</em></h1>
+            <p class="hero-intro">
+              Tres rejillas recogen la lluvia junto al bordillo. Bajo la calle,
+              el sistema vigila el nivel y conduce el agua filtrada hasta un
+              dispersor entre las plantas de la vereda.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-lime" href="#explorador"
+                ><i data-icon="cube"></i>Explorar el sistema</a
+              ><a class="btn btn-outline" href="/monitoreo"
+                ><i data-icon="wave"></i>Ver monitoreo</a
+              >
+            </div>
+          </div>
+          <figure class="hero-product">
+            <div class="model-meta">
+              <span class="mini-line"></span>
+              <span data-section-label>Vista de superficie</span>
+            </div>
+            <div class="model-surface hero-surface" id="hero-model">
+              <img
+                class="model-poster"
+                src="/assets/maqueta.webp"
+                alt="Una cuadra con tres rejillas junto al bordillo y un pequeño parterre con dispersor en la vereda."
+              /><span class="loading-model" role="status"
+                >Preparando vista 3D…</span
+              >
+            </div>
+            <figcaption>
+              <span
+                ><i data-icon="hand"></i
+                ><span id="gesture-hint">Arrastra para girar</span></span
+              ><span class="camera-buttons"
+                ><button
+                  type="button"
+                  class="hero-cut"
+                  data-hero="cut"
+                  aria-pressed="false"
+                  aria-controls="hero-model"
+                >
+                  <i data-icon="layers"></i><span>Ver subsuelo</span></button
+                ><button
+                  class="icon-button"
+                  data-hero="out"
+                  aria-label="Alejar maqueta"
+                >
+                  <i data-icon="minus"></i></button
+                ><button
+                  class="icon-button"
+                  data-hero="in"
+                  aria-label="Acercar maqueta"
+                >
+                  <i data-icon="plus"></i></button
+                ><button
+                  class="icon-button"
+                  data-hero="reset"
+                  aria-label="Restablecer cámara"
+                >
+                  <i data-icon="rotate"></i></button
+              ></span>
+            </figcaption>
+          </figure>
+        </div>
+        <div class="wrap hero-foot">
+          <span><b></b> Circunvalación Sur · Cuadra ilustrativa</span
+          ><span
+            >Modelo ilustrativo <span class="foot-sep">/</span> Base propuesta
+            de 80 × 60 cm</span
+          >
+        </div>
+      </section>
+      <section id="sistema" class="section wrap">
+        <div class="section-lead">
+          <div>
+            <p class="kicker"><span class="dash"></span> El sistema</p>
+            <h2>Del desagüe al riego.</h2>
+          </div>
+          <p>
+            En esta cuadra, la lluvia corre por la cuneta hasta tres desagües.
+            Si el nivel sube dentro de una alcantarilla, el aviso ayuda a
+            decidir cuándo revisarla.
+          </p>
+        </div>
+        <div class="story-grid">
+          <article class="story">
+            <div class="story-visual">
+              <img
+                src="/assets/estacion.webp"
+                loading="lazy"
+                alt="Detalle de la entrada A1 junto al bordillo y de la cámara de medición al abrir el corte"
+              /><span>A1 · A2 · A3</span>
+            </div>
+            <h3>Medición en tres puntos</h3>
+            <p>
+              Bajo cada rejilla, un sensor mide la distancia hasta el agua. A1,
+              A2 y A3 comparten el monitoreo desde la misma cuadra.
+            </p>
+          </article>
+          <article class="story">
+            <div class="story-visual">
+              <img
+                src="/assets/filtro.webp"
+                loading="lazy"
+                alt="Detalle del filtro que descarga en el depósito bajo la calle"
+              /><span>Filtro y depósito</span>
+            </div>
+            <h3>Limpieza y filtrado bajo la calle</h3>
+            <p>
+              Las paletas actúan en A1. La bomba de evacuación lleva el agua al
+              filtro y de allí al depósito. La compuerta tiene una salida de
+              emergencia independiente.
+            </p>
+          </article>
+          <article class="story">
+            <div class="story-visual">
+              <img
+                src="/assets/riego.webp"
+                loading="lazy"
+                alt="Parterre de la vereda con plantas ornamentales y un dispersor conectado al riego subterráneo"
+              /><span>Parterre de la vereda</span>
+            </div>
+            <h3>Riego del parterre cercano</h3>
+            <p>
+              Desde el depósito, la bomba de riego alimenta una tubería
+              enterrada. Solo el cabezal del dispersor asoma entre las plantas
+              ornamentales.
+            </p>
+          </article>
+        </div>
+      </section>
+      <section id="explorador" class="explorer section">
+        <div class="wrap">
+          <div class="section-lead">
+            <div>
+              <p class="kicker"><span class="dash"></span> Explorador 3D</p>
+              <h2>Debajo de la calle.</h2>
+            </div>
+            <p>
+              Empieza por las tres rejillas de la cuneta. Abre el corte del
+              subsuelo para ver las cámaras, el depósito y la tubería que sube
+              al parterre.
+            </p>
+          </div>
+          <div class="explore-shell">
+            <div class="explore-board">
+              <div class="board-head">
+                <span
+                  ><i data-icon="cube"></i>
+                  <span id="board-view-label" data-section-label
+                    >Vista de superficie</span
+                  ></span
+                ><button id="tour" class="small-btn" aria-pressed="false">
+                  <i data-icon="play"></i><span>Recorrido guiado</span>
+                </button>
+              </div>
+              <div id="detail-model" class="model-surface explore-surface">
+                <img
+                  class="model-poster"
+                  src="/assets/maqueta.webp"
+                  alt="Cuadra ilustrativa de Circunvalación Sur con tres desagües en la calzada y un parterre en la vereda."
+                /><span class="loading-model" role="status"
+                  >Preparando vista 3D…</span
+                >
+              </div>
+              <div id="explore-status" class="sr" role="status"></div>
+              <div class="board-controls">
+                <label class="camera-select"
+                  ><i data-icon="view"></i
+                  ><span class="sr">Vista de cámara</span
+                  ><select id="view">
+                    <option value="general">Vista general</option>
+                    <option value="top">Vista superior</option>
+                    <option value="detail">Vista de detalle</option>
+                  </select></label
+                ><span class="camera-buttons"
+                  ><button
+                    class="icon-button"
+                    data-zoom="out"
+                    aria-label="Alejar vista"
+                  >
+                    <i data-icon="minus"></i></button
+                  ><button
+                    class="icon-button"
+                    data-zoom="in"
+                    aria-label="Acercar vista"
+                  >
+                    <i data-icon="plus"></i></button
+                  ><button
+                    class="icon-button"
+                    data-zoom="reset"
+                    aria-label="Restablecer la vista general"
+                  >
+                    <i data-icon="rotate"></i></button
+                ></span>
+              </div>
+            </div>
+            <aside class="component">
+              <label class="field-label" for="component-picker"
+                >Componente seleccionado</label
+              ><select id="component-picker"></select>
+              <div class="component-info" aria-live="polite">
+                <div class="module-icon" id="module-icon"></div>
+                <p id="module-short" class="kicker"></p>
+                <h3 id="module-name"></h3>
+                <p id="module-description"></p>
+              </div>
+              <p class="location">
+                <b>Ubicación</b><span id="module-place"></span>
+              </p>
+              <a href="#materiales" class="text-link" id="open-material"
+                ><i data-icon="book"></i>Consultar materiales</a
+              >
+            </aside>
+          </div>
+          <div class="viewer-options" aria-label="Capas de la maqueta">
+            <button data-layer="points" aria-pressed="true">
+              <i data-icon="view"></i>Puntos interactivos</button
+            ><button data-layer="exploded" aria-pressed="false">
+              <i data-icon="layers"></i>Vista explotada</button
+            ><button data-layer="cut" aria-pressed="false">
+              <i data-icon="layers"></i>Corte del subsuelo</button
+            ><button data-layer="flow" aria-pressed="false">
+              <i data-icon="droplet"></i>Recorrido del agua
+            </button>
+          </div>
+          <p class="flow-key" id="flow-key" hidden>
+            <span>Filtrado y riego</span><span>Salida de emergencia</span>
+          </p>
+          <p class="viewer-note">
+            Cuadra ilustrativa. Las profundidades se han esquematizado para
+            mostrar las conexiones. La animación explica los recorridos
+            previstos.
+          </p>
+        </div>
+      </section>
+      <section id="materiales" class="section wrap">
+        <div class="section-lead">
+          <div>
+            <p class="kicker"><span class="dash"></span> Materiales</p>
+            <h2>Pieza por pieza.</h2>
+          </div>
+          <p>
+            Consulta el inventario de montaje y localiza cada elemento en la
+            maqueta. Los estados indican qué está previsto y qué queda por
+            confirmar.
+          </p>
+        </div>
+        <div class="catalog">
+          <div class="catalog-list">
+            <label class="field-label" for="category">Categoría</label
+            ><select id="category"></select>
+            <div
+              id="material-list"
+              role="group"
+              aria-label="Materiales de la categoría"
+            ></div>
+          </div>
+          <article class="material-detail" aria-live="polite">
+            <div class="material-head">
+              <span id="mat-state" class="status-chip"></span
+              ><span id="mat-qty"></span>
+            </div>
+            <div id="material-art"></div>
+            <h3 id="mat-name"></h3>
+            <p id="mat-what"></p>
+            <dl id="mat-spec"></dl>
+            <a href="#explorador" class="text-link" id="locate-material"
+              ><i data-icon="view"></i>Localizar en la maqueta</a
+            >
+          </article>
+        </div>
+      </section>
+      <section class="monitor-preview">
+        <div class="wrap monitor-layout">
+          <div>
+            <p class="kicker"><span class="dash"></span> Monitoreo</p>
+            <h2>Una vista de todo<br />el sistema.</h2>
+            <p>
+              Consulta lecturas, estados reportados e incidentes. El panel
+              conserva el historial y permite descargarlo en CSV.
+            </p>
+            <a class="btn btn-lime" href="/monitoreo"
+              ><i data-icon="monitor"></i>Abrir el panel</a
+            >
+          </div>
+          <div class="preview-console">
+            <div class="console-head">
+              <span class="console-title"
+                ><i data-icon="wave"></i> Niveles de agua</span
+              ><span>cm</span>
+            </div>
+            <p class="demo-stamp">Modo demostración — datos simulados</p>
+            <div class="sample-row">
+              <b>A1</b><span class="track"><i style="width: 48%"></i></span
+              ><span>14,4 cm</span>
+            </div>
+            <div class="sample-row">
+              <b>A2</b><span class="track"><i style="width: 25%"></i></span
+              ><span>4,0 cm</span>
+            </div>
+            <div class="sample-row">
+              <b>A3</b><span class="track"><i style="width: 32%"></i></span
+              ><span>5,1 cm</span>
+            </div>
+            <p class="console-note">
+              Ejemplo de lecturas de altura en tres puntos.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section id="tecnica" class="section wrap tech">
+        <div>
+          <p class="kicker"><span class="dash"></span> Información técnica</p>
+          <h2>Del sensor <br />al navegador.</h2>
+          <a
+            class="text-link"
+            href="/assets/guia-urbana.pdf"
+            target="_blank"
+            rel="noopener"
+            ><i data-icon="book"></i>Guía de la maqueta urbana (PDF)</a
+          >
+        </div>
+        <div class="tech-list">
+          <details open>
+            <summary>Arquitectura de comunicación</summary>
+            <p>
+              El ESP32 toma las lecturas y envía paquetes autenticados por Wi-Fi
+              a una API HTTP. El servidor registra la recepción en SQLite y
+              actualiza los navegadores por SSE. En Internet, el transporte
+              requiere HTTPS.
+            </p>
+          </details>
+          <details>
+            <summary>Alcance del prototipo</summary>
+            <p>
+              A1 incorpora mecanismos de intervención. A2 y A3 supervisan el
+              nivel. Una altura elevada justifica inspeccionar el punto y puede
+              tener distintas causas. La plataforma registra las salidas
+              ordenadas por el controlador.
+            </p>
+          </details>
+          <details>
+            <summary>Calibración y protecciones</summary>
+            <p>
+              La altura útil ocupada requiere calibrar cada recipiente. El
+              sensor del depósito está pendiente de confirmar y ambas bombas se
+              bloquean cuando su medida es inválida. La LCD, las señales y las
+              protecciones funcionan localmente.
+            </p>
+          </details>
+          <details>
+            <summary>Planos de la cuadra</summary>
+            <div class="plan-links">
+              <a href="/assets/urbano-planta.svg" target="_blank" rel="noopener"
+                >Planta de la calle</a
+              ><a href="/assets/urbano-corte.svg" target="_blank" rel="noopener"
+                >Corte y recorrido del agua</a
+              >
+            </div>
+          </details>
+          <details>
+            <summary>Próxima validación física</summary>
+            <p>
+              Queda por medir la geometría final, identificar el sensor del
+              depósito y comprobar las lecturas, las cargas y el enlace Wi-Fi
+              con el ESP32 montado. La realimentación de movimiento y las
+              notificaciones en segundo plano son posibles ampliaciones.
+            </p>
+          </details>
+        </div>
+      </section>
+      <section id="contacto" class="contact-strip">
+        <div class="wrap">
+          <div>
+            <p class="kicker"><span class="dash"></span> Contacto</p>
+            <h2>Conoce el prototipo.</h2>
+          </div>
+          <button class="btn btn-dark" id="contact-open">
+            Solicitar una demostración
+          </button>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="wrap">
+        <a class="brand" href="#principal"
+          ><img alt="" src="/brand.svg" width="29" height="29" /><span
+            data-brand
+            >Pluvia</span
+          ></a
+        ><span>Sistema de drenaje pluvial inteligente</span
+        ><a href="#contacto">Contacto</a>
+      </div>
+    </footer>
+    <dialog id="contact-dialog" aria-labelledby="contact-heading">
+      <form id="contact-form">
+        <div class="dialog-head">
+          <p class="kicker">Contacto</p>
+          <button
+            type="button"
+            class="icon-button"
+            aria-label="Cerrar formulario"
+            id="contact-close"
+          >
+            <i data-icon="close"></i>
+          </button>
+        </div>
+        <h2 id="contact-heading">Solicita una demostración.</h2>
+        <p>Deja tus datos y cuéntanos qué te gustaría conocer del prototipo.</p>
+        <label
+          >Nombre<input
+            required
+            name="name"
+            maxlength="100"
+            autocomplete="name" /></label
+        ><label
+          >Correo electrónico<input
+            required
+            name="email"
+            maxlength="254"
+            type="email"
+            autocomplete="email" /></label
+        ><label
+          >Mensaje<textarea
+            required
+            name="message"
+            rows="3"
+            maxlength="3000"
+          ></textarea></label
+        ><button class="btn btn-dark" type="submit">Registrar solicitud</button>
+        <p id="form-result" role="status"></p>
+      </form>
+    </dialog>
+    <noscript
+      ><p class="no-js">
+        Activa JavaScript para usar el visor, el catálogo y el formulario. Los
+        planos y la guía de la maqueta están disponibles en Información técnica.
+      </p></noscript
+    >
+  </body>
+</html>

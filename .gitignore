@@ -1,0 +1,12 @@
+.env
+data/
+__pycache__/
+*.pyc
+firmware/MonitoreoAgua/Secretos.h
+node_modules/
+.venv/
+
+.DS_Store
+.vercel/
+.env.*
+!.env.example

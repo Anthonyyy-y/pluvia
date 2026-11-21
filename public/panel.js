@@ -298,7 +298,7 @@
     }
   }
   function subscribe(ctx) {
-    if (!window.EventSource) {
+    if (location.hostname.endsWith('.vercel.app') || !window.EventSource) {
       $('stream-state').textContent = 'Actualización periódica';
       return;
     }

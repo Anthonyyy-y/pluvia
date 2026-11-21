@@ -174,7 +174,7 @@ def route(app, env):
                 raise Problem(401,"Contraseña incorrecta.")
             token = secrets.token_urlsafe(32)
             with app.lock:
-                app.logins[digest(token)] = time.monotonic()+8*3600
+                app.logins[digest(token)] = app.clock()+8*3600
             return reply(200,{"authenticated":True},[cookie("pluvia_monitor",token,app.secure,8*3600)])
         if action == "logout":
             keys(data,"","salida")

@@ -131,12 +131,12 @@ class Store:
                                 f"El depósito bloquea la bomba de {label}.",tank["valid"] and data["tank"][key] is False,now)
         return True
 
-    def watchdog(self, stale, offline):
+    def watchdog(self, stale, offline, scope=None):
         now = time.time()
         with self.db(True) as db:
             for row in db.execute("""SELECT s.scope,s.connection,r.received FROM scopes s
-                                JOIN readings r ON s.latest=r.id WHERE s.connection!='disconnected' AND r.received<=?""",
-                                  (now-stale,)).fetchall():
+                                JOIN readings r ON s.latest=r.id WHERE s.connection!='disconnected' AND r.received<=?""" + (" AND s.scope=?" if scope else ""),
+                                  (now-stale, scope) if scope else (now-stale,)).fetchall():
                 status = "disconnected" if now-row["received"] >= offline else "stale"
                 self._connection(db,row["scope"],row["connection"],status,now)
 

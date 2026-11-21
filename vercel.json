@@ -1,0 +1,11 @@
+{
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "",
+  "outputDirectory": "public",
+  "functions": {"api/endpoint.py": {"includeFiles": "server/**"}},
+  "rewrites": [
+    {"source": "/api/v1/:resource*", "destination": "/api/endpoint?resource=:resource*"},
+    {"source": "/monitoreo", "destination": "/monitoreo/index.html"}
+  ]
+}

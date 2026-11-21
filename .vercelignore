@@ -1,8 +1,9 @@
 .git
+.venv
+**/__pycache__
 .env*
 data
 firmware
-server
 tests
 docs
 node_modules

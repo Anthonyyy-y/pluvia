@@ -36,7 +36,9 @@ def digest(token):
 
 
 class Runtime:
-    def __init__(self, env):
+    clock = staticmethod(time.monotonic)
+
+    def __init__(self, env, stores=None):
         self.device = env.get("DEVICE_ID", "pluvia-01")
         if not ID.fullmatch(self.device):
             raise ValueError("DEVICE_ID debe usar entre 1 y 64 letras ASCII, números, guiones o guiones bajos.")
@@ -48,9 +50,11 @@ class Runtime:
         self.period = float(env.get("DEMO_INTERVAL_SECONDS", 2))
         if not (math.isfinite(self.offline) and 0 < self.period < self.stale < self.offline):
             raise ValueError("Se requiere 0 < intervalo de demo < caducidad < desconexión.")
-        directory = ROOT / env.get("DATA_DIR", "data")
-        directory.mkdir(mode=0o700, parents=True, exist_ok=True)
-        self.stores = {"real":Store(directory/"real.sqlite3","REAL"), "demo":Store(directory/"demo.sqlite3","SIMULACION")}
+        if stores is None:
+            directory = ROOT / env.get("DATA_DIR", "data")
+            directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+            stores = {"real":Store(directory/"real.sqlite3","REAL"), "demo":Store(directory/"demo.sqlite3","SIMULACION")}
+        self.stores = stores
         self.stores["real"].create_scope(self.device)
         self.lock = threading.RLock()
         self.live = {}
@@ -58,10 +62,11 @@ class Runtime:
         self.limits = {}
         self.closing = threading.Event()
         self.watch = threading.Thread(target=self.run, name="Vigilancia", daemon=True)
-        self.watch.start()
+        if type(self) is Runtime:
+            self.watch.start()
 
     def limited(self, key, maximum, period):
-        now = time.monotonic()
+        now = self.clock()
         with self.lock:
             times = self.limits.setdefault(key, deque())
             while times and times[0] < now-period:
@@ -74,7 +79,7 @@ class Runtime:
         if not token:
             return False
         with self.lock:
-            return self.logins.get(digest(token),0) > time.monotonic()
+            return self.logins.get(digest(token),0) > self.clock()
 
     def authorize(self, mode, cookies):
         if mode == "real":
@@ -89,7 +94,7 @@ class Runtime:
             raise Problem(401, "Inicia una sesión de demostración.")
         with self.lock:
             if scope in self.live:
-                self.live[scope]["touched"] = time.monotonic()
+                self.live[scope]["touched"] = self.clock()
         return scope
 
     def start(self, token, manual, ip):
@@ -102,12 +107,12 @@ class Runtime:
                 scope = digest(token)
                 store.create_scope(scope)
             if scope not in self.live:
-                now = time.monotonic()
+                now = self.clock()
                 self.live[scope] = {"boot":secrets.token_hex(12),"start":now,"selected":now,"seq":0,"last":0,
                                     "scenario":"normal","touched":now,"manual":manual}
                 if not manual:
                     self.emit(scope, now)
-            self.live[scope]["touched"] = time.monotonic()
+            self.live[scope]["touched"] = self.clock()
         return scope,token
 
     def emit(self, scope, now):
@@ -125,7 +130,7 @@ class Runtime:
             run = self.live.get(scope)
             if not run:
                 raise Problem(409,"Vuelve a abrir la demostración para continuar.")
-            now = time.monotonic()
+            now = self.clock()
             run.update(scenario=selected,selected=now,manual=False,touched=now)
             if selected != "offline":
                 self.emit(scope, now)
@@ -142,7 +147,7 @@ class Runtime:
         next_cleanup = 0
         while not self.closing.is_set():
             try:
-                now = time.monotonic()
+                now = self.clock()
                 with self.lock:
                     for scope, run in list(self.live.items()):
                         if now-run["touched"] > 90:

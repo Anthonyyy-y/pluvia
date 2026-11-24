@@ -1,5 +1,44 @@
 # Pluvia
 
+## Entrega académica de Nivelación TI
+
+Universidad Técnica de Machala · Paralelo C · Grupo 5.
+
+Pluvia es un prototipo de monitoreo y alerta temprana de niveles anormales en desagües pluviales mediante ESP32. La integración actual supervisa los datos en una página web por Wi-Fi. Un nivel elevado orienta una inspección y no confirma por sí solo una obstrucción.
+
+### Equipo
+
+| Integrante | Función confirmada |
+| --- | --- |
+| Anthony Jara | Líder del grupo · GitHub: [Anthonyyy-y](https://github.com/Anthonyyy-y) |
+| Ricardo Sizalima | Por confirmar |
+| Patrick Llanos | Por confirmar |
+| Jesus Pauta | Por confirmar |
+| Erick Changkuon | Por confirmar |
+| Emily Quiñones | Por confirmar |
+| Kleiner Toro | Por confirmar |
+| Jalil Cuenca | Por confirmar |
+
+### Código y recursos por área
+
+| Carpeta | Contenido disponible | Pendiente |
+| --- | --- | --- |
+| [PSeInt](PSeInt/) | Guía manual y referencia al diseño del algoritmo | Archivo `.psc` ejecutable y validado |
+| [Java](Java/) | Guías de pseudocódigo e integración con ESP32 | Traducción `.java`, compilación y prueba |
+| [Electronica](Electronica/) | Copia del firmware publicado y recursos locales de Wokwi | Simulación compartida y validación física |
+
+Las carpetas agrupan los recursos que existen; la presencia de una carpeta no acredita que el código pendiente ya esté implementado. Cada integrante debe subir su propio aporte desde su cuenta. La organización no atribuye contribuciones individuales ni sustituye esa entrega.
+
+### Enlaces
+
+- [Página pública de Pluvia](https://pluvia-mu.vercel.app/).
+- [Monitor real](https://pluvia-mu.vercel.app/monitoreo?modo=real).
+- [Repositorio público](https://github.com/Anthonyyy-y/pluvia).
+- [Archivos de simulación](Electronica/Simulacion_Wokwi/). Enlace ejecutable de Wokwi pendiente de publicación.
+
+La página pública conserva sus archivos y funcionamiento. La documentación técnica original continúa a continuación. La propuesta posterior de dos desagües sigue pendiente de implementación; los recursos aquí reunidos representan A1, A2 y A3.
+
+
 Plataforma para presentar y supervisar un prototipo de drenaje pluvial en una cuadra ilustrativa de Circunvalación Sur. En superficie hay tres rejillas a ras de la cuneta y un parterre ornamental en la vereda, con un único dispersor. Las cámaras, el filtro, el depósito, las bombas y el compartimento seco de electrónica se encuentran bajo rasante. Incluye la web pública, una maqueta 3D editable, el catálogo de montaje, el monitor privado y una demostración pública con su propio historial.
 
 ![La calle sobre rasante y el corte con las cámaras, el depósito y el riego bajo la vereda.](docs/maqueta-urbana.webp)

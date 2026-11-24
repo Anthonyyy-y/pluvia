@@ -1,0 +1,242 @@
+PIS - VERSION INTEGRADA DE DRENAJE Y RIEGO - 20 NOVIEMBRE 2026
+============================================================
+
+ARCHIVOS PRINCIPALES
+Abrir esp32/MonitoreoAgua/MonitoreoAgua.ino en Arduino IDE.
+Mantener Configuracion.h en la MISMA carpeta. Todos los ajustes se hacen ahi.
+Placa: ESP32 clasico WROOM; no utilizar este pinout para C3, S3 o WROVER.
+Bibliotecas usadas: LiquidCrystal 1.0.7 y ESP32Servo 3.2.1.
+Nucleo usado para compilar: esp32:esp32 3.3.12.
+Esta carpeta contiene las mejoras. El programa inicial sigue separado en
+../esp32/MonitoreoAgua/ y su respaldo en ../versiones antiguas/firmware/.
+El Word y las guias academicas anteriores no se han modificado.
+
+QUE INCLUYE
+- A1: JSN-SR04T en TRIG/ECHO, motor DC de limpieza simulada, servo de
+  compuerta y una bomba de evacuacion hacia el deposito, pasando por el filtro.
+- A2 y A3: sensores HC-SR04; aviso en LCD y en indicadores comunes.
+- LCD 16x2 paralela SIN I2C, alternando A1/A2/A3, deposito y luz.
+- LDR comun con resistencia de 10 kohm: habilita el riego si hay luz estable.
+- Riego cada 15 s en demostracion, o cada 10 minutos con MODO_DEMO=false.
+  Cada riego dura inicialmente 5 s. Despues de apagarse espera otro intervalo.
+- LED verde/amarillo/rojo y buzzer activo LOW MH-FMD, conservados mediante
+  un 74HC595. Este circuito adicional permite disponer de las salidas necesarias.
+- USB serial a 115200 baudios para pruebas; se conserva PIS1 para A1.
+
+ORDEN DE TRABAJO ACTUALIZADO
+Destino final confirmado: ESP32 -> Wi-Fi -> pagina web con resultados y alertas.
+Primero se hara el montaje, la calibracion y las pruebas fisicas de todas las
+funciones. DESPUES se implementara Wi-Fi y la conexion con la pagina.
+Esta version no intenta conectarse a una red ni necesita una pagina abierta.
+LCD, sensores y mecanismos trabajan localmente; el USB ayuda a diagnosticar.
+La aplicacion Java de escritorio pertenece a la propuesta anterior y no es
+necesaria para la arquitectura final. No hace falta instalarla para estas pruebas.
+
+PENDIENTES REALES (NO SON PRUEBAS YA REALIZADAS)
+1. Version exacta y ficha del JSN-SR04T: aun no confirmadas.
+   Se mantiene el modo por pulsos del firmware anterior y un pulso TRIG de 20 us.
+   Que el codigo anterior compile no verifica el rango de la unidad fisica.
+2. Medir distancia al fondo y al nivel maximo util de CADA recipiente.
+   Los valores de Configuracion.h son EJEMPLOS para preparar pruebas.
+3. No se ha confirmado sensor para el deposito. La version de montaje tiene
+   SENSOR_DEPOSITO_INSTALADO=false. Por ello las DOS BOMBAS estan bloqueadas.
+   Esto no afecta las mediciones, LCD, LED, buzzer, motor ni compuerta.
+   El sistema no puede deducir el agua disponible en el deposito a partir de A1.
+4. Comprobar modelos, tensiones, consumo de arranque y polaridad de los
+   controladores de potencia y compatibilidad de las senales de la LCD.
+5. Se ha verificado compilacion y logica; falta la prueba con el circuito real.
+
+PINES ESP32 (CAMBIAN RESPECTO AL PROTOTIPO ANTERIOR)
+Elemento                         GPIO
+A1 JSN-SR04T TRIG / ECHO          13 / 34
+A2 HC-SR04 TRIG / ECHO            14 / 35
+A3 HC-SR04 TRIG / ECHO            18 / 36
+Deposito opcional TRIG / ECHO     19 / 39
+Control motor DC A1               27
+Control bomba evacuacion A1       16
+Control bomba riego               17
+Senal servo                      23
+Nodo LDR                         32
+LCD RS / E                       21 / 22
+LCD D4 / D5 / D6 / D7            25 / 26 / 33 / 4
+74HC595 datos / reloj / latch     2 / 5 / 15
+74HC595 OE                       0
+GPIO36 y GPIO39 pueden estar rotulados VP y VN.
+No utilizar los pines antiguos de LED/buzzer: ahora cumplen otras funciones.
+TX0/RX0 quedan disponibles para USB serial. GPIO12 y los de flash no se usan.
+
+74HC595: CONSERVAR LED Y BUZZER
+Se usa SN74HC595/74HC595 de 16 pines, alimentado a 3,3 V.
+Revisar la muesca y numeracion antes de conectar:
+  16 VCC -> 3V3; 8 GND -> GND.
+  14 SER/DS -> GPIO2; 11 SRCLK/SHCP -> GPIO5.
+  12 RCLK/STCP -> GPIO15.
+  10 SRCLR/MR -> 3V3.
+  13 OE -> GPIO0; agregar resistencia 10 kohm desde OE a 3V3.
+  15 QA/Q0 -> resistencia 1 kohm -> anodo LED verde; catodo a GND.
+   1 QB/Q1 -> resistencia 1 kohm -> anodo LED amarillo; catodo a GND.
+   2 QC/Q2 -> resistencia 1 kohm -> anodo LED rojo; catodo a GND.
+   3 QD/Q3 -> entrada I/O del modulo buzzer MH-FMD activo LOW.
+  Buzzer VCC -> 3V3 y GND -> GND. Agregar pull-up de 10 kohm entre su I/O y 3V3.
+  Capacitor de 100 nF entre VCC y GND del 74HC595, cerca del chip.
+  Salidas Q4-Q7 y salida serial QH' sin conectar.
+No conectar el elemento sonoro de dos patas directamente a Q3: este diseno
+supone el modulo de tres pines MH-FMD del programa anterior.
+Las resistencias de 1 kohm limitan la carga de los LED sobre el registro.
+Para el SN74HC595N DIP de 16 pines (muesca orientada hacia arriba):
+  16 VCC -> 3V3; 8 GND -> GND; 10 SRCLR/MR -> 3V3.
+  14 SER/DS -> GPIO2; 11 SRCLK/SHCP -> GPIO5; 12 RCLK/STCP -> GPIO15.
+  13 OE -> GPIO0 y resistencia 10 kohm hacia 3V3.
+  15 Q0 -> resistencia 1 kohm -> anodo LED verde; catodo -> GND.
+  1 Q1 -> resistencia 1 kohm -> anodo LED amarillo; catodo -> GND.
+  2 Q2 -> resistencia 1 kohm -> anodo LED rojo; catodo -> GND.
+  3 Q3 -> I/O del modulo buzzer MH-FMD, alimentado a 3V3 como antes.
+  Agregar 10 kohm de Q3 a 3V3 para mantener silencio cuando este en alta impedancia.
+  Capacitor ceramico de 100 nF entre pines 16 y 8, cerca del integrado.
+  Q4-Q7 y Q7' pueden quedar sin conectar.
+Los GPIO0/2/5/15 son de arranque: solo se conectan a entradas de alta
+impedancia del 74HC595. No agregar cargas o resistencias distintas sobre
+ellos. El pull-up de OE mantiene las salidas deshabilitadas al reiniciar.
+El programa carga LED apagados y buzzer en silencio antes de habilitarlas.
+BOOT sigue siendo el boton de programacion; no mantenerlo pulsado al arrancar.
+Si aun no tienen el 74HC595, pueden probar el resto con USAR_74HC595=false;
+los indicadores se conservan en la version completa cuando lo instalen.
+
+SENSORES Y ADAPTACION DE VOLTAJE
+No ingresar ECHO de 5 V directamente al ESP32.
+Para cada sensor con ECHO a 5 V:
+  ECHO --- resistencia 2,2 kohm --- nodo GPIO --- resistencia 3,3 kohm --- GND.
+El divisor entrega unos 3 V nominales a partir de 5 V.
+Comprobar alimentacion y especificaciones de la unidad antes de energizar.
+La sonda del JSN es la pieza protegida; mantener su placa electronica seca.
+Los HC-SR04 comunes no son impermeables; mantenerlos lejos de salpicaduras.
+
+LCD 16x2 SIN I2C
+Compatible con HD44780. Verificar etiquetas/pinout de su pantalla:
+  1 VSS -> GND; 2 VDD -> alimentacion indicada por el fabricante.
+  3 VO -> cursor central de potenciometro de 10 kohm.
+  Extremos del potenciometro -> VDD y GND.
+  4 RS -> GPIO21; 5 RW -> GND; 6 E -> GPIO22.
+  7-10 D0-D3 -> sin conectar.
+  11 D4 -> GPIO25; 12 D5 -> GPIO26; 13 D6 -> GPIO33; 14 D7 -> GPIO4.
+  15 A -> alimentacion de retroiluminacion mediante resistencia apropiada
+  (220 ohm como punto inicial si corresponde al modulo); 16 K -> GND.
+La LCD de 5 V puede necesitar que se adapten sus seis senales de 3,3 V.
+Comprobar el nivel HIGH requerido por su modelo. Si no acepta 3,3 V, usar
+un buffer 74HCT245/74AHCT245 a 5 V, en direccion ESP32->LCD (no 74HC245).
+RW queda en GND para que la pantalla no envie datos de 5 V al ESP32.
+La simulacion no comprueba esta compatibilidad electrica.
+
+LDR COMUN, SIN MODULO
+  3V3 --- resistencia 10 kohm --- nodo GPIO32 --- LDR --- GND.
+La LDR no tiene polaridad. No alimentar este divisor a 5 V.
+La pantalla muestra el ADC de la LDR para ajustar los dos umbrales de luz.
+Con esta orientacion, mas luz significa menor lectura.
+La LDR detecta iluminacion: una lampara tambien puede activar la demostracion.
+
+MOTOR, BOMBAS, SERVO Y FUENTE
+Usar tres canales de control de potencia: motor DC, evacuacion y riego.
+Las entradas de esos modulos deben aceptar logica de 3,3 V y sus salidas
+deben admitir el consumo de arranque de la carga, con proteccion inductiva.
+ACTIVO_HIGH permite elegir HIGH o LOW para cada canal. Verificarlo SIN carga.
+Si usan MOSFET discretos, agregar polarizacion que mantenga apagadas las
+cargas durante el arranque; no confiar solo en el codigo.
+Fuente externa regulada para motor, bombas y servo; dimensionarla segun
+sus tensiones y consumos reales. GND comun con el ESP32.
+No pasar corriente de potencia por GPIO ni por protoboard de senales.
+Si el ESP32 usa alimentacion USB, no inyectar simultaneamente otra fuente
+en su pin 5V/3V3. Alimentar la potencia por separado y unir solo las tierras.
+Motor fuera del agua, eje y paletas blandas: representa trituracion, no corta
+basura real. Los residuos quedan en una canastilla removible.
+
+CALIBRAR ANTES DE ACCIONAR
+En Configuracion.h, cada fila SENSORES tiene:
+  {trig, echo, minimoCm, maximoCm, vacioCm, llenoCm, instalado}.
+vacioCm = distancia entre sensor y fondo, no altura de la caja exterior.
+llenoCm = distancia entre sensor y el agua al nivel maximo util.
+nivel_cm = vacioCm - distancia; porcentaje = nivel_cm/(vacioCm-llenoCm)*100.
+El porcentaje representa altura util ocupada, NO litros ni caudal.
+Ejemplo JSN: sensor a 60 cm del fondo y nivel maximo a 30 cm del sensor.
+En ese caso 45 cm de distancia son 15 cm de agua y 50% de altura util.
+El JSN puede colocarse elevado sobre un soporte para respetar su zona ciega.
+El minimo provisional de A1 es 25 cm: verificarlo contra su version y pruebas.
+Nunca configurar A1 como los HC-SR04 de 2 cm de distancia minima.
+
+LOGICA DE FUNCIONAMIENTO
+- NIVEL_ALTO=75% sostenido 4 s inicia un solo ciclo por incidente en A1.
+- Motor 4 s; espera de comprobacion 3 s; abre compuerta; espera 4 s.
+- Si sigue alto y el deposito puede recibir agua, evacua como maximo 8 s.
+- Si el nivel baja al 55%, apaga las cargas; exige 1,2 s de nivel bajo para rearmar.
+- Un fallo de A1 detiene sus cargas. Recuperar el sensor no repite el motor
+  si el incidente anterior todavia no se ha resuelto.
+- El deposito debe superar 25% para habilitar riego; se detiene al llegar a 15%.
+- Deposito al 90% inhibe/detiene evacuacion; se libera al bajar al 80%.
+- Una lectura invalida no se interpreta como nivel normal o agua disponible.
+- Se requieren dos lecturas validas consecutivas para recuperar un sensor.
+- Las esperas usan millis(). Cada lectura de eco tiene un limite breve y
+  separado para no esperar minutos bloqueando la vigilancia.
+
+REJILLA, FILTRO Y SALIDA AUXILIAR
+Las tres salidas normales pueden ir por gravedad hacia un filtro y deposito
+comunes. La compuerta auxiliar debe tener descarga hacia una bandeja de
+emergencia independiente cuando el deposito este lleno.
+La bomba de evacuacion se detiene si el deposito no puede recibir agua.
+El filtro es pasivo y desmontable: malla + esponja lavable; no lleva codigo.
+Usar agua limpia y residuos simulados. No demuestra tratamiento sanitario.
+
+USB PARA PRUEBAS (COMPATIBILIDAD HISTORICA CON JAVA)
+Salida predeterminada: PIS1,tiempo_ms,REAL,distancia_cm,nivel_cm,estado,detalle.
+Se mantiene exactamente el contrato de siete campos para A1. Estados:
+NORMAL, PRECAUCION, ALERTA o ERROR. NA significa dato no disponible.
+Los umbrales nuevos se calculan sobre la altura util configurada; el receptor debe
+mostrar el estado enviado sin reclasificar con los limites antiguos.
+No se mezcla texto libre con el protocolo. PIS1 no incluye A2/A3 para evitar
+que una aplicacion antigua mezcle sus datos con los de A1.
+TELEMETRIA_EXTENDIDA=true agrega paquetes PIS2/PIS2S: ver PROTOCOLO_USB.txt.
+En java/ solo se encontraron guias HTML; no hay fuentes de una aplicacion
+Java para ejecutar una prueba integral. Esas guias son material historico.
+Se verifico el formato de salida como herramienta de pruebas locales.
+Para estas pruebas pueden utilizar el Monitor Serie de Arduino a 115200.
+El envio por Wi-Fi de datos y alertas a la web queda para la siguiente etapa.
+
+SIMULACION WOKWI
+Abrir https://wokwi.com/projects/new/esp32
+Usar los archivos de simulacion/wokwi/:
+  sketch.ino, Configuracion.h, diagram.json y libraries.txt.
+Crear la pestana Configuracion.h si no aparece. Instalar las dos bibliotecas
+con las versiones indicadas y pulsar Play.
+Ese perfil activa un CUARTO SENSOR SIMULADO y etiqueta los paquetes SIMULACION.
+No cargar su configuracion como si confirmara un sensor fisico instalado.
+El JSN se representa con un HC-SR04 limitado por el programa: la emulacion
+no valida el comportamiento real del JSN, su impermeabilidad ni su electronica.
+Tres LED inferiores representan motor/evacuacion/riego. Los indicadores
+conectados al 74HC595 representan los LED antiguos. El LED azul representa
+la activacion del buzzer, sin simular el sonido del modulo MH-FMD.
+La simulacion no mueve agua ni calcula filtracion: cambiar distancias a mano.
+
+PRUEBA DE EXPOSICION
+1. A1 a 55 cm, A2/A3 a 18 cm, deposito simulado a 15 cm, luz 1000 lux.
+2. A1 a 33 cm: nivel 90%; observar limpieza, compuerta y evacuacion.
+3. A1 a 55 cm durante al menos 1,2 s: recuperacion y rearme.
+4. A2 o A3 a 6 cm: aviso, sin activar mecanismos de A1.
+5. Deposito a 24 cm: sin riego. A 6 cm: detiene/inhibe evacuacion por lleno.
+6. Luz a 1 lux: suspende riego. Volver a 1000 lux: espera un intervalo completo.
+7. A1 a 6 cm: ERROR por zona ciega; el motor no debe activarse.
+8. Desconectar ECHO o llevar distancia fuera de montaje: ERROR, no nivel cero.
+Repetir con regla y agua en el montaje real antes de presentar resultados.
+
+REFERENCIAS
+Materiales electronicos de la version completa:
+  1 ESP32 WROOM, 1 JSN-SR04T, 2 HC-SR04 para A2/A3,
+  1 sensor adicional para deposito (pendiente; el programa prepara otro HC-SR04),
+  1 LCD 16x2 paralela, 1 LDR, 1 motor DC, 1 servo, 2 minibombas,
+  3 canales de control de potencia, 1 74HC595, 3 LED y 1 modulo buzzer MH-FMD,
+  3 resistencias de 1 kohm para LED, 3 resistencias de 10 kohm (LDR/OE/buzzer),
+  1 capacitor de 100 nF, 1 potenciometro de 10 kohm y los divisores ECHO,
+  fuente y cableado. Adaptacion logica de LCD segun su modelo.
+
+https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
+https://www.ti.com/lit/ds/symlink/sn74hc595.pdf
+https://docs.wokwi.com/parts/wokwi-74hc595
+https://docs.wokwi.com/parts/wokwi-lcd1602
+https://docs.wokwi.com/parts/wokwi-hc-sr04

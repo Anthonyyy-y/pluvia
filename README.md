@@ -4,6 +4,33 @@ Pluvia es un prototipo de monitoreo y alerta temprana de acumulación de agua en
 
 ![Corte del modelo de dos desagües con el tubo A–B, la derivación, el filtro, el estanque y el riego.](public/assets/corte.webp)
 
+## Entrega académica de Nivelación TI
+
+Universidad Técnica de Machala · Paralelo C · Grupo 5.
+
+### Equipo
+
+| Integrante | Función confirmada |
+| --- | --- |
+| Anthony Jara | Líder del grupo · GitHub: [Anthonyyy-y](https://github.com/Anthonyyy-y) |
+| Ricardo Sizalima | Por confirmar |
+| Patrick Llanos | Por confirmar |
+| Jesus Pauta | Por confirmar |
+| Erick Changkuon | Por confirmar |
+| Emily Quiñones | Por confirmar |
+| Kleiner Toro | Por confirmar |
+| Jalil Cuenca | Por confirmar |
+
+### Código y recursos por área
+
+- [PSeInt](PSeInt/MonitoreoPluvia.psc) y [Java](Java/MonitoreoPluvia.java).
+- [Electrónica y firmware de dos desagües](firmware/PluviaDos/).
+- [Simulación electrónica en Wokwi](https://wokwi.com/projects/481630393585899521) y [archivos del circuito](public/descargas/Wokwi_Pluvia.zip).
+- [Sitio público](https://pluvia-mu.vercel.app/), [monitor](https://pluvia-mu.vercel.app/monitoreo/) y [repositorio del equipo](https://github.com/Anthonyyy-y/pluvia).
+- [Informe final en Word](docs/entrega/Informe_Pluvia.docx) y [matriz de verificación](docs/entrega/Matriz.md).
+
+Cada integrante debe registrar su aporte desde su propia cuenta.
+
 ## Abrir en esta computadora
 
 Desde la carpeta `WEB`, ejecuta el servidor con Python 3.9 o posterior. Para la exposición local basta la biblioteca estándar. Three.js, la tipografía, los planos y las imágenes se sirven desde el proyecto.

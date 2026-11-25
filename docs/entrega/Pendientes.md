@@ -1,0 +1,20 @@
+# Material que falta para cerrar la entrega
+
+Las rutas parten de la carpeta WEB del paquete. El sitio puede probarse con las evidencias disponibles. Para cambiar los textos, medios, nombres y enlaces de presentación se edita `public/content.js`. Los ajustes eléctricos se editan en el sketch que se cargará en la placa.
+
+| Qué debe proporcionar el equipo | Dónde se incorpora |
+|---|---|
+| Fotografía del producto terminado y permiso para publicarla | Guardar como `public/assets/evidencias/prototipo.jpg` y asignar `media.prototype` en `public/content.js`. Se utiliza en Inicio y Proceso. |
+| Fotos propias de los componentes, el montaje electrónico y las pruebas con agua | Guardar como `public/assets/evidencias/componentes.jpg`, `montaje.jpg` y `pruebas.jpg` en la misma carpeta. Asignar sus rutas públicas a `media.components`, `media.assembly` y `media.tests` en `public/content.js`. |
+| Foto individual autorizada de cada uno de los ocho integrantes y responsabilidades confirmadas de los siete colaboradores | Añadir cada foto en `public/assets/equipo/` y editar `team[].photo` y `team[].role` en `public/content.js`. La función de Anthony Jara ya figura como líder. |
+| Usuario GitHub de Patrick Llanos, enlaces a aportes individuales e identificación oficial del número de proyecto si se exige | Usuario en `public/content.js` → `team[].github`. En `Informe_Pluvia.docx`, completar ficha académica, verificaciones y anexos con los enlaces a los commits. |
+| Correo de contacto autorizado y perfiles de redes que se desee publicar | `public/content.js` → `contactEmail`, `socialLinks` (objetos con `url` y `label`). Ya están disponibles los enlaces del proyecto y de Wokwi. |
+| Variante de sensores instalada, distancias al fondo medidas con regla, geometría definitiva y dimensiones de componentes | `firmware/PluviaDos/Ajustes.h` → `sensores`, `profundidadCm`; actualizar fichas `modules` en `public/content.js` y apartados de diseño y materiales de `Informe_Pluvia.docx`. |
+| Confirmación de los trazos de cuchillas en el frontal de D2 | `public/content.js` → ficha de B, `public/model/assembly.js`, `public/assets/frontal.svg` y láminas del Word. El boceto conserva las marcas; se ha registrado solo un motor, ubicado en D1. |
+| Caudal de entrada y bombeo medidos con la manguera definitiva; tiempo del servo y capacidad útil | `firmware/PluviaDos/Ajustes.h` → `relacionCaudal`, `capacidadMs`, `viajeServoMs`. El campo de nivel del estanque se publica como `null` mientras el montaje carezca de sensor. |
+| Ensayo con alimentación estable, CSV real, alturas contrastadas, fecha y condiciones de prueba | `public/content.js` → `results.measurement`, `results.method`, `results.date` y `media.observations`; guardar la figura en `public/assets/evidencias/resultados.jpg`. Añadir el CSV y su procedencia a los anexos de `Informe_Pluvia.docx`. |
+| Red local y configuración de la placa de destino | Crear la copia privada `firmware/PluviaDos/Secretos.h` a partir de `RedEjemplo.h`. Ajustar la red de 2,4 GHz y, para nube, la identidad y el token del servidor. Mantener esta copia fuera de los archivos de distribución. |
+| Confirmar la simulación pública en ejecución, escanear el QR con teléfono, probar la Expoferia y registrar la entrega individual en EVEA | Anotar fecha y evidencia en `Informe_Pluvia.docx` y en `Matriz.md`. El enlace Wokwi y el repositorio sí respondieron al verificar la entrega. |
+| Publicación de esta revisión de frontend y backend, comprobación de recepción v2 desde la placa y actualización de fuentes en GitHub | Las fuentes están en `WEB/`, incluida `vercel.json`. Los enlaces públicos y el QR identifican el sitio del proyecto; ver `docs/DESPLIEGUE.md`. Actualizar `Informe_Pluvia.docx` y `Matriz.md` con evidencia del despliegue. |
+
+Los campos marcados en el Word con **[PENDIENTE: dato]** se completan allí aunque su equivalente web ya se haya editado. Al cambiar los archivos de un sketch distribuido o del circuito, regenerar el ZIP que corresponda en `public/descargas/`.

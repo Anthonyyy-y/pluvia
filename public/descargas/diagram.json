@@ -1,0 +1,549 @@
+{
+  "version": 1,
+  "author": "Proyecto educativo de drenaje y riego",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": 160,
+      "left": 30,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd",
+      "top": 185,
+      "left": 370,
+      "attrs": {
+        "pins": "full"
+      }
+    },
+    {
+      "type": "wokwi-servo",
+      "id": "servo",
+      "top": 410,
+      "left": 360,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr",
+      "top": 430,
+      "left": -220,
+      "attrs": {
+        "lux": "1000"
+      }
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "s1",
+      "top": -70,
+      "left": -400,
+      "attrs": {
+        "distance": "39"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t1",
+      "top": -120,
+      "left": -400,
+      "attrs": {
+        "text": "D1 JSN emulado: vacio40cm; 50%=35cm; 80%=32cm"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "ra0",
+      "top": 40,
+      "left": -400,
+      "attrs": {
+        "value": "2200"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rb0",
+      "top": 90,
+      "left": -400,
+      "attrs": {
+        "value": "3300"
+      }
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "s2",
+      "top": -70,
+      "left": -150,
+      "attrs": {
+        "distance": "13"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t2",
+      "top": -120,
+      "left": -150,
+      "attrs": {
+        "text": "D2 HC-SR04: vacio14cm; 50%=9cm; 80%=6cm"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "ra1",
+      "top": 40,
+      "left": -150,
+      "attrs": {
+        "value": "2200"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rb1",
+      "top": 90,
+      "left": -150,
+      "attrs": {
+        "value": "3300"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led0",
+      "top": 590,
+      "left": -390,
+      "attrs": {
+        "color": "red",
+        "label": "Motor triturador (ENA)"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rl0",
+      "top": 530,
+      "left": -390,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 590,
+      "left": -30,
+      "attrs": {
+        "color": "green",
+        "label": "Bomba riego (ENB)"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rl2",
+      "top": 530,
+      "left": -30,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "nota",
+      "top": 700,
+      "left": -380,
+      "attrs": {
+        "text": "PLUVIA: DOS DESAGUES. D1: JSN emulado por HC-SR04.\nLED MOTOR=GPIO27; LED RIEGO=GPIO17 representan cargas del L298N.\nConfirmar deposito vacio enviando V por Serial. Saldo de agua estimado."
+      }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "contraste",
+      "top": 340,
+      "left": 650,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rlcd",
+      "top": 130,
+      "left": 650,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "estado0",
+      "left": -810,
+      "top": 650,
+      "attrs": {
+        "color": "green",
+        "label": "NORMAL"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "restado0",
+      "left": -810,
+      "top": 570,
+      "attrs": {
+        "value": "1000"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "estado1",
+      "left": -680,
+      "top": 650,
+      "attrs": {
+        "color": "yellow",
+        "label": "PRECAUCION"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "restado1",
+      "left": -680,
+      "top": 570,
+      "attrs": {
+        "value": "1000"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "estado2",
+      "left": -550,
+      "top": 650,
+      "attrs": {
+        "color": "red",
+        "label": "ALERTA"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "restado2",
+      "left": -550,
+      "top": 570,
+      "attrs": {
+        "value": "1000"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "s1:VCC",
+      "esp:5V",
+      "red",
+      []
+    ],
+    [
+      "s1:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "s1:TRIG",
+      "esp:13",
+      "blue",
+      []
+    ],
+    [
+      "s1:ECHO",
+      "ra0:1",
+      "green",
+      []
+    ],
+    [
+      "ra0:2",
+      "esp:34",
+      "green",
+      []
+    ],
+    [
+      "ra0:2",
+      "rb0:1",
+      "green",
+      []
+    ],
+    [
+      "rb0:2",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "s2:VCC",
+      "esp:5V",
+      "red",
+      []
+    ],
+    [
+      "s2:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "s2:TRIG",
+      "esp:14",
+      "blue",
+      []
+    ],
+    [
+      "s2:ECHO",
+      "ra1:1",
+      "green",
+      []
+    ],
+    [
+      "ra1:2",
+      "esp:35",
+      "green",
+      []
+    ],
+    [
+      "ra1:2",
+      "rb1:1",
+      "green",
+      []
+    ],
+    [
+      "rb1:2",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "esp:27",
+      "rl0:1",
+      "red",
+      []
+    ],
+    [
+      "rl0:2",
+      "led0:A",
+      "red",
+      []
+    ],
+    [
+      "led0:C",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "esp:17",
+      "rl2:1",
+      "green",
+      []
+    ],
+    [
+      "rl2:2",
+      "led2:A",
+      "green",
+      []
+    ],
+    [
+      "led2:C",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "servo:V+",
+      "esp:5V",
+      "red",
+      []
+    ],
+    [
+      "servo:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "servo:PWM",
+      "esp:23",
+      "orange",
+      []
+    ],
+    [
+      "ldr:VCC",
+      "esp:3V3",
+      "red",
+      []
+    ],
+    [
+      "ldr:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "ldr:AO",
+      "esp:32",
+      "purple",
+      []
+    ],
+    [
+      "lcd:VSS",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "lcd:VDD",
+      "esp:5V",
+      "red",
+      []
+    ],
+    [
+      "lcd:RW",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "lcd:RS",
+      "esp:21",
+      "green",
+      []
+    ],
+    [
+      "lcd:E",
+      "esp:22",
+      "green",
+      []
+    ],
+    [
+      "lcd:D4",
+      "esp:25",
+      "green",
+      []
+    ],
+    [
+      "lcd:D5",
+      "esp:26",
+      "green",
+      []
+    ],
+    [
+      "lcd:D6",
+      "esp:33",
+      "green",
+      []
+    ],
+    [
+      "lcd:D7",
+      "esp:4",
+      "green",
+      []
+    ],
+    [
+      "contraste:VCC",
+      "esp:5V",
+      "red",
+      []
+    ],
+    [
+      "contraste:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "contraste:SIG",
+      "lcd:V0",
+      "green",
+      []
+    ],
+    [
+      "lcd:A",
+      "rlcd:1",
+      "red",
+      []
+    ],
+    [
+      "rlcd:2",
+      "esp:5V",
+      "red",
+      []
+    ],
+    [
+      "lcd:K",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "esp:2",
+      "restado0:1",
+      "green",
+      []
+    ],
+    [
+      "restado0:2",
+      "estado0:A",
+      "green",
+      []
+    ],
+    [
+      "estado0:C",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "esp:3V3",
+      "restado1:1",
+      "green",
+      []
+    ],
+    [
+      "restado1:2",
+      "estado1:A",
+      "green",
+      []
+    ],
+    [
+      "estado1:C",
+      "esp:5",
+      "green",
+      []
+    ],
+    [
+      "esp:3V3",
+      "restado2:1",
+      "green",
+      []
+    ],
+    [
+      "restado2:2",
+      "estado2:A",
+      "green",
+      []
+    ],
+    [
+      "estado2:C",
+      "esp:15",
+      "green",
+      []
+    ],
+    [
+      "$serialMonitor:TX",
+      "esp:RX",
+      "",
+      []
+    ],
+    [
+      "$serialMonitor:RX",
+      "esp:TX",
+      "",
+      []
+    ]
+  ],
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  }
+}

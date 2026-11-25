@@ -27,14 +27,14 @@ void paso(uint32_t t,float a1=10,float a2=10,float a3=10,float dep=50) {
   actualizarAlarmas(t);actualizarDeposito(t);controlarAlcantarilla1(t);controlarRiego(t);
 }
 void comprobarLecturas() {
-  reiniciar();registrarDistancia(0,45,100);
-  assert(!sensorOK(0,100));registrarDistancia(0,45,500);
+  reiniciar();registrarDistancia(0,35,100);
+  assert(!sensorOK(0,100));registrarDistancia(0,35,500);
   assert(sensorOK(0,500)&&std::fabs(sensores[0].nivel-50)<0.01f);
-  assert(std::fabs(sensores[0].alturaCm-15)<0.01f);
+  assert(std::fabs(sensores[0].alturaCm-5)<0.01f);
   registrarDistancia(0,6,900);assert(!sensorOK(0,900));
   assert(std::string(sensores[0].detalle)=="OBJETO_DEMASIADO_CERCA");
   registrarDistancia(1,6,900);registrarDistancia(1,6,1300);
-  assert(sensorOK(1,1300)&&std::fabs(sensores[1].nivel-87.5f)<0.01f);
+  assert(sensorOK(1,1300)&&std::fabs(sensores[1].nivel-80.0f)<0.01f);
   registrarDistancia(1,NAN,1700);assert(!sensorOK(1,1700));
   registrarDistancia(1,6,2100);assert(!sensorOK(1,2100));
   registrarDistancia(1,6,2500);assert(sensorOK(1,2500));
@@ -64,7 +64,7 @@ void comprobarSecuencia() {
 void comprobarOtrosPuntos() {
   reiniciar();paso(100,10,90,90);paso(4100,10,90,90);
   assert(nivelAlto[1]&&nivelAlto[2]&&!salida[0]&&!salida[1]);
-  actualizarIndicadores(4500);assert(registro595&4); // Alerta tambien de A2/A3.
+  actualizarIndicadores(4500);assert(pines[LED_ROJO]==LOW); // Rojo activo LOW.
   reiniciar();paso(100,90);paso(2000,60);paso(4100,90);assert(!nivelAlto[0]);
   std::cout<<"PASS: A2/A3 avisan sin activar A1 y los picos no disparan el ciclo\n";
 }
@@ -113,7 +113,7 @@ void comprobarSerialYLCD() {
   assert(lineas.size()==(TELEMETRIA_EXTENDIDA?6U:1U));
   auto c=dividir(lineas[0],',');assert(c.size()==7&&c[0]=="PIS1");
   assert(c[2]==(SIMULACION_WOKWI?"SIMULACION":"REAL"));
-  assert(c[3]=="45.00"&&c[4]=="15.00"&&c[5]=="PRECAUCION"&&c[6]=="OK");
+  assert(c[3]=="35.00"&&c[4]=="5.00"&&c[5]=="PRECAUCION"&&c[6]=="OK");
   if(TELEMETRIA_EXTENDIDA) {
     for(unsigned i=1;i<=4;i++){auto campos=dividir(lineas[i],',');assert(campos.size()==8&&campos[0]=="PIS2");}
     assert(dividir(lineas[5],',').size()==9);
@@ -140,13 +140,13 @@ void comprobarLuz() {
 void comprobarAdquisicion() {
   reiniciar();
   for (uint8_t i=0;i<4;i++) {
-    float distancia=i==0?55.0f:i==3?15.0f:18.0f;
+    float distancia=i==0?39.0f:i==3?15.0f:13.0f;
     ecos[SENSORES[i].echo]=static_cast<unsigned long>(distancia/0.01715f);
   }
   for(uint32_t t=100;t<=800;t+=100){reloj=t;actualizarSensores(t);}
   assert(sensorOK(0,800)&&sensorOK(1,800)&&sensorOK(2,800));
-  assert(std::fabs(sensores[0].distancia-55.0f)<0.03f);
-  assert(std::fabs(sensores[1].nivel-12.5f)<0.2f);
+  assert(std::fabs(sensores[0].distancia-39.0f)<0.03f);
+  assert(std::fabs(sensores[1].nivel-10.0f)<0.2f);
   assert(sensorOK(3,800)==SENSORES[3].instalado);
   assert(ultimoTimeout<10000UL);
   for(uint8_t i=0;i<4;i++)ecos[SENSORES[i].echo]=0;
@@ -154,10 +154,25 @@ void comprobarAdquisicion() {
   assert(!sensorOK(0,1200)&&!sensorOK(1,1200)&&!sensorOK(2,1200));
   std::cout<<"PASS: adquisicion secuencial, pines ECHO y ausencia de eco\n";
 }
+void comprobarLedDirectos() {
+  reiniciar();alimentar(1000,10,10,10);actualizarIndicadores(1000);
+  assert(pines[LED_VERDE]==HIGH&&pines[LED_AMARILLO]==HIGH&&pines[LED_ROJO]==HIGH);
+  alimentar(1100,50,10,10);actualizarIndicadores(1100);
+  assert(pines[LED_VERDE]==LOW&&pines[LED_AMARILLO]==LOW&&pines[LED_ROJO]==HIGH);
+  alimentar(1200,90,10,10);actualizarIndicadores(1200);
+  assert(pines[LED_VERDE]==LOW&&pines[LED_AMARILLO]==HIGH&&pines[LED_ROJO]==LOW);
+  alimentar(1250,10,10,10);registrarDistancia(0,NAN,1250);actualizarIndicadores(1250);
+  assert(pines[LED_VERDE]==LOW&&pines[LED_AMARILLO]==HIGH&&pines[LED_ROJO]==HIGH);
+  reloj=1500;actualizarIndicadores(1500);
+  assert(pines[LED_VERDE]==HIGH&&pines[LED_AMARILLO]==LOW&&pines[LED_ROJO]==LOW);
+  assert(!escritos[0]);
+  std::cout<<"PASS: tres LED directos, niveles inversos, fallo y GPIO0 libre\n";
+}
 int main(){
   setup();assert(!salida[0]&&!salida[1]&&!salida[2]);
-  assert((registro595&8)!=0&&pines[SR_OE]==LOW);
+  assert(pines[LED_VERDE]==LOW&&pines[LED_AMARILLO]==HIGH&&pines[LED_ROJO]==HIGH);
   comprobarLecturas();comprobarSecuencia();comprobarOtrosPuntos();
   comprobarRiego();comprobarDepositoLleno();comprobarSerialYLCD();comprobarLuz();
   comprobarAdquisicion();
+  comprobarLedDirectos();
 }

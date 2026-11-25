@@ -95,10 +95,10 @@ def sse(app, mode, scope, cookies):
 
 
 def static_file(path, head):
-    if path in ("/monitoreo","/monitoreo/"):
-        path = "/monitoreo/index.html"
-    elif path == "/":
-        path = "/index.html"
+    if path.endswith("/"):
+        path += "index.html"
+    elif (PUBLIC/path.lstrip("/")).is_dir():
+        path += "/index.html"
     target = (PUBLIC/path.lstrip("/")).resolve()
     if PUBLIC not in target.parents or any(p.startswith(".") for p in Path(path).parts) or not target.is_file():
         raise Problem(404,"Recurso no encontrado.")
@@ -108,7 +108,7 @@ def static_file(path, head):
             for chunk in iter(lambda:f.read(128*1024), b""):
                 yield chunk
     mime = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
-    return 200, [("Content-Type",mime),("Content-Length",str(size)),("Cache-Control","no-cache")], [] if head else chunks()
+    return 200, [("Content-Type",mime),("Content-Length",str(size)),("Cache-Control","no-cache"),("X-Pluvia-API","1")], [] if head else chunks()
 
 
 def route(app, env):
@@ -247,6 +247,8 @@ class Application:
 
 class ThreadedServer(ThreadingMixIn, WSGIServer):
     daemon_threads = True
+    # El navegador solicita estilos, módulos y texturas a la vez al cambiar de página.
+    request_queue_size = 128
 
 
 def create_application():

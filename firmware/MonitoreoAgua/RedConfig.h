@@ -1,9 +1,11 @@
 #pragma once
 #include <stdint.h>
 
-// Verificar por separado cada recipiente antes de cambiar su valor.
+// A2/A3: fondo a10cm confirmado. A1 permanece sin calibrar por montaje fuera de rango.
 namespace RedConfig {
-constexpr bool CALIBRACION_CONFIRMADA[4] = {false, false, false, false};
+constexpr bool CALIBRACION_CONFIRMADA[4] = {false, true, true, false};
+constexpr bool DIAGNOSTICO_RED_USB = true; // true agrega lineas RED al Monitor Serie.
+constexpr uint32_t REPETIR_DIAGNOSTICO_MS = 10000;
 constexpr uint32_t INTERVALO_ENVIO_MS = 3000;
 constexpr uint32_t REINTENTO_WIFI_MS = 12000;
 constexpr uint32_t REINTENTO_MAXIMO_MS = 30000;

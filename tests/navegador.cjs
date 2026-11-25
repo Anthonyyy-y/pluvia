@@ -53,23 +53,6 @@ async function startBackend(directory, password) {
   });
   return { child, url };
 }
-async function assertSection(page, section) {
-  const open = section === 'subsuelo';
-  for (const selector of ['#hero-model', '#detail-model'])
-    assert.equal(
-      await page.locator(selector).getAttribute('data-section'),
-      section,
-    );
-  for (const selector of ['[data-hero=cut]', '[data-layer=cut]'])
-    assert.equal(
-      await page.locator(selector).getAttribute('aria-pressed'),
-      String(open),
-    );
-  assert.equal(
-    await page.locator('[data-hero=cut] span').innerText(),
-    open ? 'Ver superficie' : 'Ver subsuelo',
-  );
-}
 async function assertPlanLoaded(page, selector, file) {
   await page.waitForFunction(
     ({ selector, file }) => {
@@ -83,234 +66,60 @@ async function assertPlanLoaded(page, selector, file) {
     { selector, file },
   );
 }
-async function verifyLanding(browser, url, width, height) {
-  const page = await browser.newPage({
-    viewport: { width, height },
-    reducedMotion: 'reduce',
-  });
+async function verifyLanding(browser,url,width,height) {
+  const page = await browser.newPage({viewport:{width,height},reducedMotion:'reduce'});
   const errors = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  page.on('response', (r) => {
-    if (r.status() >= 400) errors.push(r.status() + ' ' + r.url());
-  });
+  page.on('pageerror',e=>errors.push(e.message));
+  page.on('requestfailed',r=>{if (!r.failure()?.errorText.includes('ABORTED')) errors.push(r.url()+' '+r.failure()?.errorText);});
+  page.on('console',m=>{ if(m.type()==='error')errors.push(m.text()); });
+  page.on('response',r=>{ if(r.status()>=400)errors.push(r.status()+' '+r.url()); });
   await page.goto(url);
   await page.locator('#hero-model.ready').waitFor();
-  await assertSection(page, 'superficie');
   await page.locator('[data-hero=cut]').click();
-  await assertSection(page, 'subsuelo');
-  await page.locator('[data-hero=cut]').click();
-  await assertSection(page, 'superficie');
-  assert(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-    'Desbordamiento horizontal a ' + width,
-  );
-  if (width === 390) {
-    await page.locator('.mobile-menu').click();
-    await page.locator('#main-nav a[href="#sistema"]').click();
-    await page.locator('#main-nav').waitFor({ state: 'hidden' });
+  assert.equal(await page.locator('#hero-model').getAttribute('data-section'),'subsuelo');
+  await page.locator('.pl-menu').click();
+  const routes=await page.locator('#pl-menu-list a').evaluateAll(links=>links.map(a=>a.getAttribute('href')));
+  assert.equal(routes.length,11);
+  for (const route of routes) {
+    await page.goto(url+route,{waitUntil:'networkidle'});
+    const navReady = await page.locator('#pl-menu-list [aria-current=page]').count();
+    if (!navReady || errors.length) throw Error(width+'px '+route+' : '+JSON.stringify(errors)+' '+await page.title());
+
+    await page.locator('main h1').waitFor();
+    assert.equal(await page.locator('#pl-menu-list [aria-current=page]').getAttribute('href'),route);
+    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Desbordamiento '+route+' a '+width);
+    if(route==='/producto/') {
+      await page.locator('#detail-model').scrollIntoViewIfNeeded();
+      await page.locator('#detail-model.ready').waitFor({timeout:20000}).catch(async err => {
+        throw Error(err.message + ' / ' + width + ' px / ' + (await page.locator('#detail-model').getAttribute('class')) + ' / ' + errors.join(' · '));
+      });
+      for (const mode of ['pipes','front','covered']) {
+        await page.selectOption('#view',mode);
+        assert.equal(await page.locator('#detail-model').getAttribute('data-section'),mode==='covered'?'superficie':'subsuelo');
+      }
+      await page.selectOption('#component-picker','junction');
+      assert.match(await page.locator('#module-spec').innerText(),/./);
+      await page.click('#open-material');
+      assert.match(await page.locator('#mat-name').innerText(),/./);
+      await page.click('[data-layer=exploded]');
+      assert.equal(await page.locator('[data-layer=exploded]').getAttribute('aria-pressed'),'true');
+    }
+    if(route==='/simulacion/') {
+      await page.locator('#sim-a').fill('9');
+      assert.match(await page.locator('#sim-state').innerText(),/limpieza/);
+    }
+    if(route==='/contacto/') {
+      await page.click('#contact-open');
+      await page.locator('[name=name]').fill('Prueba');
+      await page.locator('[name=email]').fill('prueba@example.org');
+      await page.locator('[name=message]').fill('Ensayo de formulario en el servidor temporal');
+      await page.locator('#contact-form [type=submit]').click();
+      await page.getByText(/Solicitud registrada. Referencia/).waitFor();
+    }
   }
-  await page.locator('.hero-actions a').first().click();
-  await page.locator('#detail-model.ready').waitFor();
-  const surfacePins = page.locator('#detail-model .pin:not([hidden])');
-  await page.waitForFunction(
-    () =>
-      document.querySelectorAll('#detail-model .pin:not([hidden])').length ===
-      5,
-  );
-  assert.deepEqual(
-    await surfacePins.evaluateAll((nodes) =>
-      nodes.map((n) => n.dataset.component).sort(),
-    ),
-    ['a1', 'a2', 'a3', 'garden', 'sprinkler'],
-  );
-  await page.locator('[data-component=sprinkler]').click();
-  assert.equal(
-    await page.locator('#component-picker').inputValue(),
-    'sprinkler',
-  );
-  await page.locator('#open-material').click();
-  assert.match(await page.locator('#mat-name').innerText(), /dispersor/i);
-  await page.locator('#locate-material').click();
-  await assertSection(page, 'superficie');
-  await page.locator('#component-picker').selectOption('tank');
-  await assertSection(page, 'subsuelo');
-  assert.match(
-    await page.locator('#module-description').innerText(),
-    /bloquea/,
-  );
-  await page.locator('#open-material').click();
-  assert.equal(await page.locator('#mat-name').innerText(), 'Depósito común');
-  await page.locator('#category').selectOption('Control y sensores');
-  await page
-    .getByRole('button', { name: 'Sensor del depósito', exact: true })
-    .click();
-  assert.match(await page.locator('#mat-state').innerText(), /Pendiente/);
-  await page.locator('#locate-material').click();
-  assert.equal(await page.locator('#component-picker').inputValue(), 'tank');
-  await page.locator('[data-layer=exploded]').click();
-  assert.equal(
-    await page.locator('[data-layer=exploded]').getAttribute('aria-pressed'),
-    'true',
-  );
-  await page.locator('[data-layer=cut]').click();
-  await assertSection(page, 'superficie');
-  assert.equal(
-    await page.locator('[data-layer=exploded]').getAttribute('aria-pressed'),
-    'false',
-  );
-  await page.locator('[data-layer=flow]').click();
-  await assertSection(page, 'subsuelo');
-  assert.equal(
-    await page.locator('[data-layer=exploded]').getAttribute('aria-pressed'),
-    'false',
-  );
-  await page.locator('#flow-key').waitFor();
-  await page.locator('[data-layer=flow]').click();
-  await page.locator('#view').selectOption('top');
-  await page.locator('[data-zoom=reset]').click();
-  await page
-    .getByRole('button', { name: 'Tercera alcantarilla', exact: true })
-    .click();
-  assert.equal(await page.locator('#component-picker').inputValue(), 'a3');
-  await page.locator('#tour').click();
-  assert.equal(
-    await page.locator('#tour').getAttribute('aria-pressed'),
-    'true',
-  );
-  await page.locator('#tour').click();
-  await page.locator('#contact-open').click();
-  await page.locator('#contact-dialog').waitFor({ state: 'visible' });
-  if (width === 1440) {
-    await page.getByLabel('Nombre', { exact: true }).fill('Ensayo local');
-    await page
-      .getByLabel('Correo electrónico', { exact: true })
-      .fill('prueba@example.invalid');
-    await page
-      .getByLabel('Mensaje', { exact: true })
-      .fill('Verificación automática del formulario en base temporal.');
-    await page.route('**/api/v1/contact', (route) => route.abort());
-    await page.getByRole('button', { name: 'Registrar solicitud' }).click();
-    await page
-      .getByText('No se pudo conectar. Tus datos siguen en el formulario.')
-      .waitFor();
-    assert.equal(
-      await page.getByLabel('Nombre', { exact: true }).inputValue(),
-      'Ensayo local',
-    );
-    await page.unroute('**/api/v1/contact');
-    await page.getByRole('button', { name: 'Registrar solicitud' }).click();
-    await page
-      .getByText(/Solicitud registrada. Referencia [a-f0-9]+/)
-      .waitFor();
-  }
-  await page.keyboard.press('Escape');
-  assert.deepEqual(errors, []);
-  console.log(
-    width +
-      ' px: maqueta, selección, inventario, capas, recorrido y navegación correctos.',
-  );
+  assert.deepEqual(errors,[]);
   await page.close();
-}
-async function verifyPanel(browser, url, password) {
-  const page = await browser.newPage({
-    viewport: { width: 1440, height: 950 },
-  });
-  const errors = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  await page.goto(url + '/monitoreo');
-  await page.waitForFunction(() =>
-    document.querySelector('.station .badge')?.textContent.includes('NORMAL'),
-  );
-  assert.equal(
-    await page.locator('#source-label').innerText(),
-    'Modo demostración — datos simulados',
-  );
-  await page.selectOption('#scenario', 'a2_alert');
-  await page.waitForFunction(() =>
-    document
-      .querySelectorAll('.station .badge')[1]
-      .textContent.includes('ALERTA'),
-  );
-  await page.locator('.event .secondary').first().click();
-  await page.waitForFunction(() =>
-    document.querySelector('#events').textContent.includes('Reconocido'),
-  );
-  await page.selectOption('#scenario', 'tank_missing');
-  await page.waitForFunction(() =>
-    document
-      .querySelector('#reservoir')
-      .textContent.includes('Ambas bombas bloqueadas'),
-  );
-  await page.selectOption('#scenario', 'sensor_error');
-  await page.waitForFunction(() =>
-    document
-      .querySelectorAll('.station .badge')[1]
-      .textContent.includes('ERROR'),
-  );
-  assert.equal(
-    await page.locator('.station .level > span').nth(1).innerText(),
-    '—',
-  );
-  const [pauseResponse] = await Promise.all([
-    page.waitForResponse(
-      (r) =>
-        r.url().endsWith('/api/v1/demo/scenario') &&
-        r.request().postDataJSON()?.scenario === 'offline',
-    ),
-    page.selectOption('#scenario', 'offline'),
-  ]);
-  assert.equal(pauseResponse.status(), 200);
-  assert.equal((await pauseResponse.json()).scenario, 'offline');
-  await page.waitForFunction(
-    () =>
-      document
-        .querySelector('#condition')
-        .textContent.includes('Mediciones caducadas'),
-    undefined,
-    { polling: 100 },
-  );
-  await page.waitForFunction(() =>
-    document
-      .querySelector('#condition')
-      .textContent.includes('Dispositivo desconectado'),
-  );
-  assert.doesNotMatch(await page.locator('#stations').innerText(), /NORMAL/);
-  await page.selectOption('#scenario', 'recovery');
-  await page.waitForFunction(() =>
-    document.querySelector('.station .badge').textContent.includes('NORMAL'),
-  );
-  await page.selectOption('#period', '6');
-  await page.locator('#history-details summary').click();
-  await page.waitForFunction(
-    () => document.querySelector('#history-rows').children.length > 0,
-  );
-  const [download] = await Promise.all([
-    page.waitForEvent('download'),
-    page.click('#csv'),
-  ]);
-  assert.equal(download.suggestedFilename(), 'telemetria-demo-6h.csv');
-  await page.click('#mode-real');
-  await page.locator('#auth input[type=password]').fill(password);
-  await page.locator('#auth button[type=submit]').click();
-  await page
-    .getByText('Esperando datos del dispositivo', { exact: true })
-    .first()
-    .waitFor();
-  for (const width of [390, 768, 320]) {
-    await page.setViewportSize({ width, height: 850 });
-    assert(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    );
-  }
-  assert.deepEqual(errors, []);
-  console.log(
-    'Panel: SSE, alertas, reconocimiento, recuperación, exportación y espera autenticada correctos.',
-  );
-  await page.close();
+  console.log('Once rutas verificadas a '+width+' px');
 }
 (async () => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'pluvia-ui-'));
@@ -319,11 +128,12 @@ async function verifyPanel(browser, url, password) {
   try {
     server = await startBackend(temp, password);
     browser = await chromium.launch({
+      executablePath: process.env.CHROMIUM_PATH || undefined,
       args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
     });
     for (const [w, h] of [
-      [1440, 960],
-      [390, 844],
+      [1920, 1000],
+      [375, 812],
       [768, 1024],
       [320, 740],
     ])
@@ -345,17 +155,18 @@ async function verifyPanel(browser, url, password) {
     await page.locator('[data-hero=cut]').click();
     await assertPlanLoaded(page, '#hero-model img', 'urbano-corte.svg');
     await page.locator('.hero-actions a').first().click();
+    await page.waitForLoadState('networkidle');
+    await page.locator('#detail-model').scrollIntoViewIfNeeded();
     await page.locator('#detail-model.unavailable').waitFor();
-    await assertPlanLoaded(page, '#detail-model img', 'urbano-corte.svg');
-    await page.locator('[data-layer=cut]').click();
-    await assertPlanLoaded(page, '#detail-model img', 'urbano-planta.svg');
-    await page.locator('#component-picker').selectOption('gate');
-    assert.match(await page.locator('#module-name').innerText(), /Compuerta/);
-    await assertSection(page, 'subsuelo');
-    await assertPlanLoaded(page, '#detail-model img', 'urbano-corte.svg');
+    for (const [mode,file] of [['covered','urbano-planta.svg'],['front','frontal.svg'],['pipes','superior-tuberias.svg']]) {
+      await page.selectOption('#view',mode);
+      await assertPlanLoaded(page,'#detail-model img',file);
+    }
+    await page.selectOption('#component-picker','gate');
+    assert.match(await page.locator('#module-name').innerText(),/compuerta/i);
     await page.close();
     console.log('Alternativa sin WebGL verificada.');
-    await verifyPanel(browser, server.url, password);
+    await require("./monitor.cjs").verify();
   } finally {
     if (browser) await browser.close();
     if (server && !server.child.exitCode) {

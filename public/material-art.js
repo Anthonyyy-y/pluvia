@@ -182,7 +182,7 @@ function artFor(id) {
         rect(20, 21, 109, 40, pcb, 2) +
         rect(30, 25, 88, 31, ink, 2) +
         rect(34, 29, 80, 23, '#b0c89e') +
-        text(73, 39, 'A1  A2  A3', 8) +
+        text(73, 39, 'D1     D2', 8) +
         text(74, 48, 'NIVEL', 7) +
         screw(24, 26) +
         screw(125, 55)
@@ -199,15 +199,6 @@ function artFor(id) {
           );
         })
         .join('');
-    case 7:
-      return (
-        rect(45, 30, 61, 26, pcb) +
-        circ(70, 37, 17, ink) +
-        circ(70, 37, 4, '#82988d') +
-        repeat(3, (i) => rect(85 + i * 5, 53, 2, 11, brass))
-      );
-    case 8:
-      return chip('74HC595');
     case 9:
       return (
         rect(32, 25, 46, 28, metal, 9) +
@@ -228,13 +219,13 @@ function artFor(id) {
     case 12:
       return pump();
     case 13:
-      return [0, 1, 2]
+      return [0, 1]
         .map(
           (i) =>
-            rect(23 + 34 * i, 25, 28, 29, pcb, 2) +
-            rect(27 + 34 * i, 29, 19, 11, ink) +
-            rect(28 + 34 * i, 45, 8, 6, brass) +
-            rect(39 + 34 * i, 45, 8, 6, brass),
+            rect(33 + 50 * i, 25, 28, 29, pcb, 2) +
+            rect(37 + 50 * i, 29, 19, 11, ink) +
+            rect(38 + 50 * i, 45, 8, 6, brass) +
+            rect(49 + 50 * i, 45, 8, 6, brass),
         )
         .join('');
     case 14:
@@ -321,10 +312,11 @@ function artFor(id) {
         )
       );
     case 26:
-      return (
-        path('M18 44 108 15l19 7-89 32z', ink, 1.4, '#a7c5bc') +
-        path('m18 40 3 11 17 8 90-31-1-10-89 32z', ink, 1.4, '#b8c9bb')
-      );
+      return rect(16,34,116,14,'#698f99',5) + [28,108].map(x=>rect(x,32,6,18,metal,2)).join('');
+    case 34:
+      return path('M22 53h102m-51 0V17',metal,13) + path('M22 53h102m-51 0V17','#527e86',9) + rect(65,45,16,15,brass);
+    case 36:
+      return vessel('empty');
     case 27:
       return tube();
     case 31:

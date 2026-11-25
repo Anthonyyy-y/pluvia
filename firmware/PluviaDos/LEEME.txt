@@ -1,0 +1,57 @@
+PLUVIA · DOS DESAGÜES · MONITOREO USB, WI-FI LOCAL Y NUBE
+
+1. Carga
+Abre PluviaDos.ino en Arduino IDE con los .h y .cpp de la carpeta. Selecciona
+ESP32 Dev Module (ESP32 WROOM clásico). Instala LiquidCrystal y ESP32Servo.
+El sketch funciona por USB sin configurar una red. Baudrate: 115200.
+Las pruebas del paquete se hicieron con Arduino-ESP32 4.0.0.
+
+2. Confirma el montaje
+En Ajustes.h se definen D1 (JSN-SR04T, GPIO13/34), D2 (HC-SR04, GPIO14/35),
+la altura de la maqueta, los dos fondos y la distancia mínima medible. Comprueba
+la variante física de cada sensor y mide desde su cara hasta el fondo vacío
+con una regla. El perfil propone 40 y 14 cm de montaje para 10 cm de agua útil.
+Una geometría o un eco inválidos producen null, no una altura de cero.
+Sigue el diagrama del montaje de dos desagües (ECHO con divisor a 3,3 V).
+Confirma físicamente el depósito vacío después de cada arranque manteniendo BOOT
+1 s una vez iniciado el programa o enviando V desde Arduino. Sólo entonces empieza
+la estimación de reserva. La página de monitoreo únicamente lee.
+Mide los caudales de entrada filtrada y bombeo con las mangueras definitivas;
+ajusta relacionCaudal y capacidadMs. nivelEstanque es null porque no hay sensor en el depósito. reservaEstimadaS
+expresa segundos de riego y sólo se habilita tras confirmar el depósito vacío.
+
+3. USB
+Cierra el Monitor Serie de Arduino. Abre Monitoreo > USB en un navegador con Web
+Serial (por ejemplo, Chrome de escritorio) en HTTPS o localhost. Selecciona la
+placa. El ESP32 envía una línea JSON por sensor y ciclo. Las líneas que empiezan
+con # son diagnósticos. Cada lectura incluye ts (ms desde encendido), sensor
+(D1/D2), valor (cm o null), bombaEstado (orden de riego) y nivelEstanque
+(null sin sensor). Se añaden reservaEstimadaS (segundos o null), motorEstado, compuertaAbierta, luz y origen.
+En Wokwi, establece simulacion=true antes de compilar el perfil simulado.
+
+4. Wi-Fi local
+Copia RedEjemplo.h como Secretos.h. Introduce el SSID y su clave en wifi y
+clave. Compila y carga. En el Monitor Serie observa la línea "# WiFi http://...".
+Abre el sitio desde la misma red, selecciona Wi-Fi local y pega la dirección
+completa. El servidor HTTP de la propia placa entrega GET /api/v1/lecturas.
+El JSON agrupa las dos lecturas del último ciclo. La ruta es de sólo lectura
+y se puede consultar desde equipos que tengan acceso a esa red.
+Para abrir el sitio estático en tu computadora sin Internet, ejecuta desde WEB
+"python3 -m http.server 8080 --directory public" y abre en tu navegador
+"http://localhost:8080/monitoreo/". Mantén el equipo y la placa en la misma Wi-Fi.
+Permite el acceso a la red local si el navegador lo solicita. Una página pública
+HTTPS puede bloquear una placa HTTP por contenido mixto. Puedes usar el sitio
+HTTP local, un proxy HTTPS de confianza delante del ESP32, USB o la nube.
+
+5. Internet y recepción en Pluvia
+En Secretos.h configura dispositivo y token para que coincidan con DEVICE_ID y
+DEVICE_TOKEN del servidor. destino es el endpoint HTTPS /api/v1/telemetry.
+La contraseña de acceso al panel (MONITOR_PASSWORD) es independiente del token.
+La placa espera hora NTP y verifica el certificado con las CA del núcleo antes
+de transmitir. HTTP 201 confirma la inserción. El panel Nube muestra las muestras
+del servidor tras iniciar sesión. Para esta versión se debe desplegar el backend
+con soporte del contrato v2 incluido en el proyecto. Las versiones v1 se conservan.
+La red transmite el último ciclo disponible y se reconecta si falla; la placa
+no mantiene un archivo para recuperar lecturas de todo un corte. En el navegador
+puedes exportar el CSV local o consultar el histórico conservado por la nube.
+No compartas Secretos.h ni un binario compilado con credenciales.

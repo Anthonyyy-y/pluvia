@@ -1,6 +1,6 @@
 # Ejecutar y publicar Pluvia
 
-La computadora o el servidor aloja la web, el modelo, el panel y la API. El ESP32 solo necesita poder enviar peticiones al servidor. Cada navegador obtiene sus actualizaciones por SSE desde el mismo origen que la página.
+Pluvia sirve once páginas, el explorador de dos desagües y el monitor. La placa PluviaDos ofrece tres vías de lectura: USB, Wi-Fi en la red local y envío HTTPS a la nube. En la fuente Nube, el navegador consulta periódicamente la API del mismo origen. El backend local también mantiene SSE para clientes anteriores. [Páginas, firmware y fuentes de datos](../README.md)
 
 ## Exposición en una red local
 
@@ -8,7 +8,8 @@ La computadora o el servidor aloja la web, el modelo, el panel y la API. El ESP3
 2. Configura `HOST=0.0.0.0`, `PORT=8080`, `COOKIE_SECURE=false` y `DEVICE_ID=pluvia-01`. Asigna valores independientes a `DEVICE_TOKEN` y `MONITOR_PASSWORD`. Para generar cada uno, ejecuta `python3 -c 'import secrets; print(secrets.token_urlsafe(32))'`. Un secreto vacío deja deshabilitado el acceso correspondiente. El modo público de demostración se puede usar desde el primer arranque.
 3. Arranca el backend con `python3 server/app.py`. Abre `http://127.0.0.1:8080/` en el ordenador. El mismo servicio sirve los archivos de `public/`, atiende la API y crea las bases en `WEB/data/`. Puedes detenerlo con Ctrl+C. Para una exposición únicamente en el ordenador, conserva `HOST=127.0.0.1`.
 4. Desde otro equipo de esa Wi-Fi, abre la IP LAN de la computadora con el mismo puerto, por ejemplo `http://192.168.1.50:8080/monitoreo`. Permite el tráfico entrante a ese puerto en la interfaz LAN. Si la red aísla sus clientes, usa una red donde la placa pueda alcanzar al equipo.
-5. En el sketch, la URL correspondiente al ejemplo es `http://192.168.1.50:8080/api/v1/telemetry`. Usa esa dirección en la placa y copia allí el mismo ID y token. El HTTP local transporta las credenciales en claro y está previsto para una red de exposición de confianza. Encuentra los pasos de compilación, habilitación explícita del HTTP local y comprobación de la placa en [la guía del ESP32](../firmware/README.md).
+5. Para **Wi-Fi local**, configura el SSID y la clave en la copia privada de `RedEjemplo.h` llamada `Secretos.h` dentro de PluviaDos. La placa anuncia por USB su propia IP, por ejemplo `http://192.168.1.80/api/v1/lecturas`. Selecciona **Wi-Fi local** en el monitor e introduce esa URL. El navegador debe tener acceso a la placa. Desde una página HTTPS, el navegador puede bloquear una conexión HTTP a la LAN. La exposición local por HTTP, el modo USB y la fuente Nube permiten probar las vías correspondientes. [Guía de la placa](../firmware/PluviaDos/LEEME.txt)
+6. Para **Nube**, configura una URL HTTPS completa que termine en `/api/v1/telemetry` y el mismo dispositivo y token en placa y servidor. Para **USB**, cierra el monitor serie del IDE y selecciona el puerto mediante el botón del panel en un navegador compatible con Web Serial. La demostración del panel usa datos ilustrativos del navegador.
 
 ### Configuración del backend
 
@@ -23,11 +24,11 @@ El proceso acepta variables de entorno o el archivo privado `WEB/.env`, con una 
 | `COOKIE_SECURE` | `false` para HTTP local. En HTTPS público se configura `true`. |
 | `DATA_DIR` | `data`, relativo a `WEB`, o una ruta absoluta de almacenamiento persistente. |
 | `DEMO_INTERVAL_SECONDS` | `2`. Intervalo de emisión automática por visitante de demostración. |
-| `STALE_SECONDS`, `OFFLINE_SECONDS` | `10` y `30`. Tiempo desde la última recepción hasta marcar las medidas caducadas y después la desconexión. |
+| `STALE_SECONDS`, `OFFLINE_SECONDS` | `10` y `30`. Tiempo del backend desde la última recepción hasta declarar caducidad y desconexión. |
 
-Se requiere `0 < DEMO_INTERVAL_SECONDS < STALE_SECONDS < OFFLINE_SECONDS`. Para la placa, elige un tiempo de caducidad que deje margen sobre su intervalo efectivo de envío. El firmware parte de tres segundos. Estos plazos solo determinan la frescura de los datos y la conexión. La clasificación de niveles procede de la placa.
+Se requiere `0 < DEMO_INTERVAL_SECONDS < STALE_SECONDS < OFFLINE_SECONDS`. Para la placa, elige un tiempo de caducidad que deje margen sobre su intervalo efectivo de envío. El firmware parte de tres segundos. Estos plazos solo determinan la frescura de los datos y la conexión. El perfil v2 envía alturas en cm, órdenes de control y una reserva estimada en segundos.
 
-## Publicación en Internet
+## Servidor propio con almacenamiento SQLite
 
 Esta configuración usa un servidor Linux con disco persistente, un dominio público, Caddy y un proceso WSGI Waitress. Los ejemplos sitúan el contenido de `WEB` en `/opt/pluvia`. La cuenta de servicio `pluvia` debe poder leer el programa y escribir el directorio de datos. Los cambios de dominio, DNS y certificados se realizan en el alojamiento elegido.
 
@@ -92,13 +93,13 @@ pluvia.example {
 }
 ```
 
-Valida el archivo con `caddy validate --config /etc/caddy/Caddyfile`. Aplica la configuración al servicio Caddy y comprueba el certificado en `https://tu-dominio/`. Para conectar la placa, configura la URL con el esquema HTTPS, la CA emisora y un servidor horario alcanzable. El firmware inicia el POST con validación del certificado. [Configuración TLS de la placa](../firmware/README.md)
+Valida el archivo con `caddy validate --config /etc/caddy/Caddyfile`. Aplica la configuración al servicio Caddy y comprueba el certificado en `https://tu-dominio/`. Configura en PluviaDos la URL HTTPS del dominio. La red debe dar acceso a DNS y NTP. La placa comprueba la cadena con las autoridades del núcleo y verifica el certificado antes de transmitir el token. [Configuración de la placa](../firmware/PluviaDos/LEEME.txt)
 
 ### Comprobar el despliegue
 
 - Abre la página en una ventana privada, explora la maqueta y entra en la demostración. Al cambiar de escenario, el panel debe actualizarse con la etiqueta de simulación.
-- En las herramientas de red del navegador, `/api/v1/stream?mode=demo` debe permanecer abierto con tipo `text/event-stream` y entregar eventos `snapshot`. El formulario de acceso protege el modo real. En una instalación nueva, ese modo espera el primer paquete del dispositivo.
-- Desde la carpeta `WEB`, prueba el endpoint remoto con `python3 server/simulator.py --url https://tu-dominio --scenario normal --count 3`. Deben recibirse tres respuestas 201 en su propia sesión de demostración. Los datos del simulador pertenecen a esa sesión. La prueba física requiere conectar la placa.
+- Abre **Monitoreo → Nube**, inicia sesión y revisa las peticiones de lectura, como `/api/v1/snapshot?mode=real`, en las herramientas de red. Una instalación sin lecturas válidas deja el panel en espera. Comprueba la versión, el origen real, la fecha de recepción y los dos puntos cuando la placa transmita. Los clientes históricos SSE del backend local pueden consultar `/api/v1/stream`.
+- Para comprobar el contrato anterior v1 en una sesión de demostración del servidor, desde la carpeta `WEB` prueba el endpoint remoto con `python3 server/simulator.py --url https://tu-dominio --scenario normal --count 3`. Deben recibirse tres respuestas 201 en su propia sesión de demostración. Los datos del simulador pertenecen a esa sesión. La prueba física requiere conectar la placa.
 - Envía una solicitud de prueba mediante el formulario. Conserva su identificador y verifica con la consulta siguiente que se almacenó con el mismo valor.
 - Reinicia el proceso y consulta de nuevo el historial. Comprueba también que el proxy permite sesiones SSE largas y que los archivos sobreviven a una nueva versión del código.
 
@@ -106,7 +107,7 @@ Valida el archivo con `caddy validate --config /etc/caddy/Caddyfile`. Aplica la 
 
 `real.sqlite3` contiene las lecturas físicas, incidentes y solicitudes de contacto. `demo.sqlite3` guarda las demostraciones aisladas por sesión. El servidor limpia periódicamente las sesiones inactivas de demostración cuyos datos llevan más de dos días sin actualizarse. Los datos reales permanecen hasta que el operador decida su conservación. Revisa el espacio disponible conforme aumente la frecuencia de muestreo. Guarda configuración y bases fuera de `public/`.
 
-El servidor registra una solicitud antes de devolver su referencia. El operador puede consultarla localmente con permisos sobre la base. Este procedimiento es el canal de recepción implementado para el formulario. El envío de correos requiere una integración adicional.
+En una instalación con SQLite, el servidor registra la solicitud antes de devolver su referencia. El operador puede consultarla localmente con permisos sobre la base. Este procedimiento es el canal de recepción implementado para el formulario. El envío de correos requiere una integración adicional.
 
 ```sh
 sqlite3 -readonly -header -column /var/lib/pluvia/real.sqlite3 \
@@ -142,11 +143,13 @@ Guarda las copias en almacenamiento privado y conserva una copia protegida de la
 
 Se ensayaron localmente el arranque de Waitress con estos parámetros, la protección del acceso real, una sesión de demo por SSE y la recuperación de una solicitud tras copiar las dos bases en línea. El alta del dominio, Caddy en el servidor público y la conexión del ESP32 físico quedan para el alojamiento y el montaje de destino.
 
-## Vercel con API persistente en Render
+## Publicación de Pluvia en Vercel
 
-El repositorio incluye la configuración de ambos servicios. Render Starter y el disco persistente tienen coste. Revisa el importe que muestra Render antes de crear los recursos.
+El proyecto publica los archivos de `public/` y reescribe `/api/v1/*` hacia la función Python. Configura en el entorno privado de Vercel `DATABASE_URL` para la conexión PostgreSQL, `DEVICE_ID` y `DEVICE_TOKEN` para la placa, y `MONITOR_PASSWORD` para el operador. El backend desplegado debe incluir el validador v2 de `server/protocol.py` y los módulos de persistencia que lo acompañan. [Configuración de rutas](../vercel.json) · [Función de entrada](../api/endpoint.py)
 
-1. Importa el repositorio en Render como Blueprint. Reserva el dominio de producción de Vercel e indica su origen exacto (incluido HTTPS) como `PUBLIC_WEB_ORIGIN`. Este permiso se utiliza exclusivamente para el formulario público.
-2. Copia el origen HTTPS asignado por Render. En Vercel importa el mismo repositorio con la raíz predeterminada e introduce ese origen en `PLUVIA_API_ORIGIN`. Despliega la rama main.
-3. Abre la web de Vercel y entra en Monitoreo. El panel, las cookies, el CSV y el flujo SSE usan directamente el dominio del backend. Las solicitudes comerciales de la portada atraviesan una reescritura al backend.
-4. En el ESP32 configura el endpoint HTTPS de Render terminado en `/api/v1/telemetry` y el secreto DEVICE_TOKEN generado para ese servicio. La contraseña del monitor se consulta por separado en las variables privadas de Render.
+1. Comprueba que abren las once rutas y una URL directa como `/producto/`. Prueba los modelos, los planos y las descargas en escritorio y móvil.
+2. Carga PluviaDos con el Wi-Fi del montaje, el mismo ID y token del receptor y el destino `https://pluvia-mu.vercel.app/api/v1/telemetry`. El envío a la nube requiere el perfil físico. La simulación de Wokwi se identifica como demostración.
+3. Con los sensores montados, espera un diagnóstico de envío satisfactorio. Una inserción nueva responde HTTP 201. En la pestaña **Nube**, verifica D1 y D2, la hora de recepción y el estado de bomba. Contrasta las alturas con las de la LCD y una regla. La estimación del estanque se expresa en segundos de riego.
+4. Revisa el CSV de esa sesión. En Vercel el backend persiste la telemetría y las solicitudes de contacto en PostgreSQL. Las copias del servicio se gestionan con las herramientas del proveedor de PostgreSQL.
+
+La URL pública prevista por el equipo es [Pluvia](https://pluvia-mu.vercel.app/). La verificación de la publicación requiere abrir esas rutas en el dominio y comprobar una recepción física v2. [Configuración y carga del firmware actual](../firmware/PluviaDos/LEEME.txt)

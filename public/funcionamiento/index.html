@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#132c29"><meta property="og:title" content="¿Cómo funciona? · Pluvia">
+<meta name="description" content="Sigue el recorrido del agua desde las dos rejillas hasta el dispersor de la zona verde.">
+<title>¿Cómo funciona? · Pluvia</title>
+<link rel="icon" href="/brand.svg"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/pages.css">
+<link rel="stylesheet" href="/model/viewer.css">
+<script src="/config.js"></script><script src="/content.js"></script>
+<script defer src="/site-nav.js"></script><script type="module" src="/app.js"></script>
+</head><body data-page="funcionamiento"><a class="skip" href="#principal">Saltar al contenido</a><header id="site-header"><noscript><nav class="nojs-links" aria-label="Secciones"><a href="/">Inicio</a> <a href="/proyecto/">Sobre nosotros y el proyecto</a> <a href="/producto/">Nuestro producto</a> <a href="/funcionamiento/">¿Cómo funciona?</a> <a href="/simulacion/">Simulación del proyecto</a> <a href="/monitoreo/">Monitoreo y datos en tiempo real</a> <a href="/proceso/">Proceso de desarrollo</a> <a href="/tecnologia/">Desarrollo tecnológico y código</a> <a href="/resultados/">Resultados y aplicaciones</a> <a href="/equipo/">Nuestro equipo</a> <a href="/contacto/">Contacto</a></nav></noscript></header>
+<main id="principal"><section id="sistema" class="section wrap">
+        <div class="section-lead">
+          <div>
+            <p class="kicker"><span class="dash"></span> El sistema</p>
+            <h1>Del desagüe al riego.</h1>
+          </div>
+          <p>
+            En esta cuadra, la lluvia corre por la cuneta hasta dos desagües.
+            Si el nivel sube dentro de una alcantarilla, el aviso ayuda a
+            decidir cuándo revisarla.
+          </p>
+        </div>
+        <div class="story-grid">
+          <article class="story">
+            <div class="story-visual">
+              <img
+                src="/assets/estacion.webp"
+                loading="lazy"
+                alt="Detalle de la entrada D1 junto al bordillo y de la cámara de medición al abrir el corte"
+              /><span>D1 · D2</span>
+            </div>
+            <h3>Medición en dos puntos</h3>
+            <p>
+              Bajo cada rejilla, un sensor mide la distancia hasta el agua. D1 incorpora el mecanismo de limpieza. D2 vigila el nivel en el extremo opuesto del tubo común.
+            </p>
+          </article>
+          <article class="story">
+            <div class="story-visual">
+              <img
+                src="/assets/filtro.webp"
+                loading="lazy"
+                alt="Detalle del filtro que descarga en el depósito bajo la calle"
+              /><span>Filtro y depósito</span>
+            </div>
+            <h3>Limpieza y filtrado bajo la calle</h3>
+            <p>
+              Las paletas actúan en D1. La derivación central del tubo D1–D2 conduce el agua al filtro y al estanque nuevo. La compuerta regula el desvío.
+            </p>
+          </article>
+          <article class="story">
+            <div class="story-visual">
+              <img
+                src="/assets/riego.webp"
+                loading="lazy"
+                alt="Parterre de la vereda con plantas ornamentales y un dispersor conectado al riego subterráneo"
+              /><span>Parterre de la vereda</span>
+            </div>
+            <h3>Riego del parterre cercano</h3>
+            <p>
+              Desde el estanque, la bomba de riego alimenta una tubería
+              enterrada. Solo el cabezal del dispersor asoma entre las plantas
+              ornamentales.
+            </p>
+          </article>
+        </div>
+      </section><section class="narrative wrap"><div class="pinned"><h2>La derivación central.</h2><p>El tubo enlaza las dos cámaras. En su punto medio, la compuerta habilita el ramal que conduce al filtro. Desde el estanque nuevo, una bomba alimenta el dispersor.</p></div><div class="narrative-art"><figure class="project-figure "><img src="/assets/superior-tuberias.svg" alt="Vista superior de las tuberías y de la derivación en T." loading="lazy"><figcaption>Vista superior de las tuberías y de la derivación en T.</figcaption></figure></div></section><div class="wrap facts-grid"><article class="fact"><h3>Lectura</h3><p>D1 utiliza un JSN-SR04T y D2 un HC-SR04. El controlador calcula la altura del agua a partir de la distancia al fondo configurada para cada punto.</p></article><article class="fact"><h3>Respuesta</h3><p>Con lecturas válidas y espacio estimado, cualquiera de los puntos puede solicitar el desvío. Solo D1 acciona el mecanismo de limpieza.</p></article><article class="fact"><h3>Seguimiento</h3><p>La LCD muestra los niveles. El monitor conserva la hora, los valores, las alertas y la orden de la bomba.</p><a class="text-link field-link" href="/monitoreo/">Abrir monitoreo <span aria-hidden="true">↗</span></a></article></div></main>
+<footer id="site-footer"></footer><noscript>Activa JavaScript para usar la maqueta interactiva de Pluvia.</noscript></body></html>

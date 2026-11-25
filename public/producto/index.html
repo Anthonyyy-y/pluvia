@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#132c29"><meta property="og:title" content="Nuestro producto · Pluvia">
+<meta name="description" content="Explora el prototipo de Pluvia. Abre la calzada para identificar los sensores, el filtro y el circuito de riego.">
+<title>Nuestro producto · Pluvia</title>
+<link rel="icon" href="/brand.svg"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/pages.css">
+<link rel="stylesheet" href="/model/viewer.css">
+<script src="/config.js"></script><script src="/content.js"></script>
+<script defer src="/site-nav.js"></script><script type="module" src="/app.js"></script>
+</head><body data-page="producto"><a class="skip" href="#principal">Saltar al contenido</a><header id="site-header"><noscript><nav class="nojs-links" aria-label="Secciones"><a href="/">Inicio</a> <a href="/proyecto/">Sobre nosotros y el proyecto</a> <a href="/producto/">Nuestro producto</a> <a href="/funcionamiento/">¿Cómo funciona?</a> <a href="/simulacion/">Simulación del proyecto</a> <a href="/monitoreo/">Monitoreo y datos en tiempo real</a> <a href="/proceso/">Proceso de desarrollo</a> <a href="/tecnologia/">Desarrollo tecnológico y código</a> <a href="/resultados/">Resultados y aplicaciones</a> <a href="/equipo/">Nuestro equipo</a> <a href="/contacto/">Contacto</a></nav></noscript></header>
+<main id="principal"><section id="explorador" class="explorer section">
+        <div class="wrap">
+          <div class="section-lead">
+            <div>
+              <p class="kicker"><span class="dash"></span> Explorador 3D</p>
+              <h1>Debajo de la calle.</h1>
+            </div>
+            <p>
+              Empieza por las dos rejillas de la cuneta. Abre el corte del
+              subsuelo para ver las cámaras, el depósito y la tubería que sube
+              al parterre.
+            </p>
+          </div>
+          <div class="explore-shell">
+            <div class="explore-board">
+              <div class="board-head">
+                <span
+                  ><i data-icon="cube"></i>
+                  <span id="board-view-label" data-section-label
+                    >Vista de superficie</span
+                  ></span
+                ><button id="tour" class="small-btn" aria-pressed="false">
+                  <i data-icon="play"></i><span>Recorrido guiado</span>
+                </button>
+              </div>
+              <div id="detail-model" class="model-surface explore-surface">
+                <img
+                  class="model-poster"
+                  src="/assets/maqueta.webp"
+                  alt="Cuadra ilustrativa de Circunvalación Sur con dos desagües en la calzada y un parterre en la vereda."
+                /><span class="loading-model" role="status"
+                  >Preparando vista 3D…</span
+                >
+              </div>
+              <div id="explore-status" class="sr" role="status"></div>
+              <div class="board-controls">
+                <label class="camera-select"
+                  ><i data-icon="view"></i
+                  ><span class="sr">Vista de cámara</span
+                  ><select id="view">
+                    <option value="general">Vista general</option>
+                    <option value="pipes">Superior (tuberías)</option>
+                    <option value="front">Frontal</option>
+                    <option value="covered">Superior cubierta</option>
+                    <option value="detail">Vista de detalle</option>
+                  </select></label
+                ><span class="camera-buttons"
+                  ><button
+                    class="icon-button"
+                    data-zoom="out"
+                    aria-label="Alejar vista"
+                  >
+                    <i data-icon="minus"></i></button
+                  ><button
+                    class="icon-button"
+                    data-zoom="in"
+                    aria-label="Acercar vista"
+                  >
+                    <i data-icon="plus"></i></button
+                  ><button
+                    class="icon-button"
+                    data-zoom="reset"
+                    aria-label="Restablecer la vista general"
+                  >
+                    <i data-icon="rotate"></i></button
+                ></span>
+              </div>
+            </div>
+            <aside class="component">
+              <label class="field-label" for="component-picker"
+                >Componente seleccionado</label
+              ><select id="component-picker"></select>
+              <div class="component-info" aria-live="polite">
+                <div class="module-icon" id="module-icon"></div>
+                <p id="module-short" class="kicker"></p>
+                <h3 id="module-name"></h3>
+                <p id="module-description"></p><p id="module-spec"></p>
+              </div>
+              <p class="location">
+                <b>Ubicación</b><span id="module-place"></span>
+              </p>
+              <a href="#materiales" class="text-link" id="open-material"
+                ><i data-icon="book"></i>Consultar materiales</a
+              >
+            </aside>
+          </div>
+          <div class="viewer-options" aria-label="Capas de la maqueta">
+            <button data-layer="points" aria-pressed="true">
+              <i data-icon="view"></i>Puntos interactivos</button
+            ><button data-layer="exploded" aria-pressed="false">
+              <i data-icon="layers"></i>Vista explotada</button
+            ><button data-layer="cut" aria-pressed="false">
+              <i data-icon="layers"></i>Corte del subsuelo</button
+            ><button data-layer="flow" aria-pressed="false">
+              <i data-icon="droplet"></i>Recorrido del agua
+            </button>
+          </div>
+          <p class="flow-key" id="flow-key" hidden>
+            <span>Filtrado y riego</span><span>Colector D1–D2</span>
+          </p>
+          <p class="viewer-note">
+            Cuadra ilustrativa. Las profundidades se han esquematizado para
+            mostrar las conexiones. La animación explica los recorridos
+            previstos.
+          </p>
+        </div>
+      </section><section id="materiales" class="section wrap">
+        <div class="section-lead">
+          <div>
+            <p class="kicker"><span class="dash"></span> Materiales</p>
+            <h2>Pieza por pieza.</h2>
+          </div>
+          <p>
+            Consulta el inventario de montaje y localiza cada elemento en la
+            maqueta. Los estados indican qué está previsto y qué queda por
+            confirmar.
+          </p>
+        </div>
+        <div class="catalog">
+          <div class="catalog-list">
+            <label class="field-label" for="category">Categoría</label
+            ><select id="category"></select>
+            <div
+              id="material-list"
+              role="group"
+              aria-label="Materiales de la categoría"
+            ></div>
+          </div>
+          <article class="material-detail" aria-live="polite">
+            <div class="material-head">
+              <span id="mat-state" class="status-chip"></span
+              ><span id="mat-qty"></span>
+            </div>
+            <div id="material-art"></div>
+            <h3 id="mat-name"></h3>
+            <p id="mat-what"></p>
+            <dl id="mat-spec"></dl>
+            <a href="#explorador" class="text-link" id="locate-material"
+              ><i data-icon="view"></i>Localizar en la maqueta</a
+            >
+          </article>
+        </div>
+      </section></main>
+<footer id="site-footer"></footer><noscript>Activa JavaScript para usar la maqueta interactiva de Pluvia.</noscript></body></html>

@@ -11,86 +11,37 @@ undergroundTransform.setPosition(0, 1.4, -9.2);
 function below(x, y, z) {
   return new T.Vector3(x, y, z).applyMatrix4(undergroundTransform).toArray();
 }
+// A y B están equidistantes de la T, en el mismo eje de la cuneta.
 export const surfaceAnchors = {
-  a1: [-25, ROAD, 1],
-  a2: [0, ROAD, 1],
-  a3: [25, ROAD, 1],
-  garden: [0, WALK + 1.7, -15],
-  sprinkler: [HEAD_X, WALK + 1.3, HEAD_Z],
-  base: [0, ROAD, 20],
+  a: [-25, ROAD, 1], b: [25, ROAD, 1], garden: [0, WALK + 2, -16],
+  sprinkler: [HEAD_X, WALK + 1.3, HEAD_Z], base: [0, 2, 24],
 };
 export const anchors = {
-  base: [0, 2, 20],
-  a1: below(-25, 22, 15),
-  a2: below(0, 21, 15),
-  a3: below(25, 21, 15),
-  motor: below(-31, 25, 17),
-  gate: below(-15, 19, 11),
-  p1: below(-32, 14, 6),
-  collector: below(1, 17.2, 0),
-  filter: below(-26, 15, -8),
-  tank: below(-26, 8, -18),
-  garden: surfaceAnchors.garden,
-  sprinkler: surfaceAnchors.sprinkler,
-  irrigation: below(-14, 6, -17),
-  emergency: below(34, 6, -1),
-  lcd: below(26, 9.4, -9.5),
-  control: below(26, 12, -18),
+  ...surfaceAnchors,
+  a: below(-25, 14, 22), b: below(25, 14, 22),
+  sensorA: below(-26, 32, 16), sensorB: below(25, 25, 15),
+  motor: below(-31, 25, 17), pipe: below(-11, 17, 15),
+  junction: below(0, 17, 15), gate: below(2, 19, 8),
+  filter: below(0, 15, -2), tank: below(0, 8, -18), pump: below(11, 8, -20),
+  irrigation: below(16, 8, -12),
+  control: below(25.3, 13, -19.5), lcd: below(24.8, 9.4, -9),
+  leds: below(32, 9.4, -9), ldr: below(19, 14, -22), driver: below(33, 14, -22),
 };
+// Separación ilustrativa de subconjuntos. Los marcadores siguen a sus grupos.
 const displacements = {
-  base: [0, 0, 0],
-  a1: [-4, 7, 4],
-  a2: [0, 7, 4],
-  a3: [3, 7, 4],
-  motor: [-7, 16, 5],
-  gate: [1, 12, 1],
-  p1: [-7, 7, -2],
-  collector: [0, 5, -2],
-  filter: [-5, 13, -5],
-  tank: [-5, 4, -5],
-  garden: [0, 4, -3],
-  sprinkler: [2, 5, -3],
-  irrigation: [-1, 9, -6],
-  emergency: [6, 2, 0],
-  lcd: [6, 9, -2],
-  control: [6, 8, -5],
+  a: [-5, 2, 4], b: [5, 2, 4], sensorA: [-6, 13, 0], sensorB: [6, 13, 0],
+  motor: [-10, 12, 6], pipe: [-2, 3, 2], junction: [0, 7, 4], gate: [3, 12, -1],
+  filter: [-2, 12, -3], tank: [-3, 3, -6], pump: [2, 7, -4], irrigation: [5, 5, 0],
+  garden: [-3, 6, -3], sprinkler: [3, 6, -3], control: [4, 6, -5],
+  lcd: [6, 7, 1], leds: [9, 9, 1], ldr: [1, 12, -5], driver: [7, 13, -6], base: [0,0,0],
 };
+const tee = [0, 17, 15];
+const branch = [tee, [0,17,8], [0,17,2], [0,16.5,-1.8]];
+const discharge = [[0,12.5,-4.8], [0,12.5,-10.5], [0,10.2,-11], [0,8.1,-14]];
+const delivery = [[5,8,-20], [11.4,8,-20], [16,8,-20], [16,8,-8], [HEAD_X,8,-8],
+  [HEAD_X,8,(HEAD_Z + 9.2) / 0.68], [HEAD_X,(WALK - 1.4) / 0.53,(HEAD_Z + 9.2) / 0.68]];
 const flowLines = [
-  [
-    [25, 19.5, 8],
-    [25, 19.2, 1],
-    [25, 18.2, 0],
-    [-26, 16.55, 0],
-    [-26, 16.05, -7.6],
-    [-26, 15.4, -7.6],
-    [-26, 12.7, -10],
-    [-26, 12.7, -13.4],
-    [-26, 10.1, -13.4],
-    [-26, 6, -16],
-  ],
-  [
-    [-31, 14, 9],
-    [-34, 15, 8],
-    [-34, 16, -6],
-    [-29, 16, -8],
-    [-26, 14, -8],
-  ],
-  [
-    [-21, 6, -15.5],
-    [-14, 6, -15.5],
-    [-12, 6, -15.5],
-    [HEAD_X, 6, -15.5],
-    [HEAD_X, 6, (HEAD_Z + 9.2) / 0.68],
-    [HEAD_X, (WALK - 1.4) / 0.53, (HEAD_Z + 9.2) / 0.68],
-  ],
-  [
-    [-17, 16, 13],
-    [-15, 16, 9],
-    [-13, 11, 4],
-    [-11, 8, -1],
-    [34, 6, -1],
-    [34, 4, -1],
-  ],
+  [[-24,17,15], tee], [[24,17,15], tee], branch, discharge, delivery,
 ];
 export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
   const root = new T.Group(),
@@ -301,7 +252,7 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
     frame = 'edge',
     walls = 'glass',
   ) {
-    const chamber = ['a1', 'a2', 'a3', 'tank'].includes(id);
+    const chamber = ['a', 'b', 'tank'].includes(id);
     if (chamber) frame = 'vault';
     box(id, frame, x, bottom, z, w, chamber ? 1.1 : 0.7, d);
     for (const side of [-1, 1]) {
@@ -406,22 +357,20 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
   // Bandeja técnica que sostiene las cámaras por su base.
   for (const [x, w] of [
     [-25, 18],
-    [0, 14],
     [25, 14],
   ]) {
     box('base', 'vault', x, 7.05, 15, w - 0.6, 9.7, 15);
     box('base', 'vault', x, 11.5, 15, w + 1, 1, 18);
   }
-  // Cámaras de los tres desagües. El haz central queda libre bajo cada rejilla.
+  // Cámaras de los dos desagües. El haz central queda libre bajo cada rejilla.
   for (const [id, x, w, d] of [
-    ['a1', -25, 18, 17],
-    ['a2', 0, 14, 14],
-    ['a3', 25, 14, 14],
+    ['a', -25, 18, 17],
+    ['b', 25, 14, 14],
   ]) {
     const z = 15,
       b = 12,
-      h = id === 'a1' ? 12.7 : 10.7;
-    tray(id, x, z, w, d, b, h, id === 'a1' ? 5.2 : id === 'a2' ? 3.8 : 4.4);
+      h = id === 'a' ? 12.7 : 10.7;
+    tray(id, x, z, w, d, b, h, id === 'a' ? 5.2 : 3.8);
     box(id, 'ink', x, 13.8, z + d / 2 + 0.5, 5.5, 2.45, 0.47);
     label(
       id,
@@ -434,22 +383,22 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
       '#273632',
       '#f2f5ef',
     );
-    lift = 7; // Soporte y sensor forman un subconjunto.
-    if (id === 'a1') {
-      box(id, 'metal', x - 1, 22, 5.65, 1.1, 20.3, 0.95);
-      box(id, 'steel', x - 1, 31.95, 10.75, 1.1, 1.05, 11.1);
-      box(id, 'blue', x - 1, 31.25, 15.5, 2.95, 0.85, 2.8);
-      rod(id, 'metal', [x - 1, 30.1, 15.5], [x - 1, 31.1, 15.5], 1.03);
+    const sensor = id === 'a' ? 'sensorA' : 'sensorB';
+    if (id === 'a') {
+      box(sensor, 'metal', x - 1, 22, 5.65, 1.1, 20.3, 0.95);
+      box(sensor, 'steel', x - 1, 31.95, 10.75, 1.1, 1.05, 11.1);
+      box(sensor, 'blue', x - 1, 31.25, 15.5, 2.95, 0.85, 2.8);
+      rod(sensor, 'metal', [x - 1, 30.1, 15.5], [x - 1, 31.1, 15.5], 1.03);
       for (let k = 0; k < 4; k++)
-        box(id, 'ink', x - 1, 24 + k * 1.9, 6.2, 0.36, 0.4, 0.13);
+        box(sensor, 'ink', x - 1, 24 + k * 1.9, 6.2, 0.36, 0.4, 0.13);
     } else {
-      box(id, 'metal', x, 23.1, z - 4.3, 0.9, 4, 0.9);
-      box(id, 'pcb', x, 25.1, z - 2.3, 4.9, 0.65, 5.2);
-      box(id, 'ink', x, 25.54, z - 2.45, 1.3, 0.35, 1.2);
+      box(sensor, 'metal', x, 23.1, z - 4.3, 0.9, 4, 0.9);
+      box(sensor, 'pcb', x, 25.1, z - 2.3, 4.9, 0.65, 5.2);
+      box(sensor, 'ink', x, 25.54, z - 2.45, 1.3, 0.35, 1.2);
       for (let j = 0; j < 4; j++)
-        box(id, 'brass', x - 1.4 + j * 0.9, 25.51, z - 4.1, 0.35, 0.2, 1);
+        box(sensor, 'brass', x - 1.4 + j * 0.9, 25.51, z - 4.1, 0.35, 0.2, 1);
       pipe(
-        id,
+        sensor,
         'ink',
         [
           [x + 1.8, 25.4, z - 4.2],
@@ -461,14 +410,14 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
       );
       for (const side of [-1, 1]) {
         rod(
-          id,
+          sensor,
           'metal',
           [x + side * 1.3, 23.7, z - 1],
           [x + side * 1.3, 24.9, z - 1],
           0.88,
         );
         rod(
-          id,
+          sensor,
           'ink',
           [x + side * 1.3, 23.65, z - 1],
           [x + side * 1.3, 23.75, z - 1],
@@ -476,19 +425,11 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
         );
       }
     }
-    lift = 0;
-    pipe(
-      'collector',
-      'hose',
-      [
-        [x, 19.5, 15 - d / 2],
-        [x, 19.2, 1],
-        [x, 16.9 + (x + 26) * 0.032, 0],
-      ],
-      0.64,
-    );
+    // Las marcas del frontal en B se representan como barras fijas de la cámara.
+    if (id === 'b') for (const dx of [-4.5, 4.5])
+      box(id, 'steel', x + dx, 18.4, z - 3.5, 0.33, 8, 0.4);
   }
-  // Mecanismos situados sólo en A1.
+  // A alberga el único motor, con paletas de demostración.
   rod('motor', 'metal', [-31, 23.8, 17], [-31, 27.7, 17], 1.45);
   rod('motor', 'ink', [-31, 27.5, 17], [-31, 28.2, 17], 1.32);
   rod('motor', 'steel', [-31, 16.4, 17], [-31, 24.1, 17], 0.26);
@@ -496,76 +437,36 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
   box('motor', 'orange', -31, 17.3, 17, 0.85, 0.65, 4);
   for (let k = -2; k <= 2; k++)
     box('motor', 'steel', -31 + k, 16.5, 19.7, 0.21, 4.7, 0.2);
-  box('gate', 'blue', -15.2, 18.8, 12, 2.6, 3.2, 2.6);
-  rod('gate', 'brass', [-15.2, 20.6, 12], [-15.2, 20.6, 9.6], 0.36);
-  box('gate', 'metal', -15.3, 17.7, 9.7, 0.6, 4, 2.8);
-  pipe('gate', 'steel', flowLines[3].slice(0, 4), 0.85);
-  pipe('emergency', 'steel', flowLines[3].slice(3), 0.83);
-  tray('emergency', 34, -1, 6, 6, 1.9, 2.55, 0, 'metal', 'steel');
-  // Colector en U y cartucho filtrante, con descarga libre a D.
-  // La canaleta baja progresivamente desde A3 y vierte por encima del cartucho del filtro.
-  const slope = Math.atan2(1.65, 51);
-  const tilt = new T.Quaternion().setFromAxisAngle(
-    new T.Vector3(0, 0, 1),
-    slope,
-  );
-  box('collector', 'metal', -0.5, 17.05, 0, 54, 0.44, 2.8, tilt);
-  for (const z of [-1.32, 1.32])
-    box('collector', 'white', -0.5, 17.7, z, 54, 1.5, 0.28, tilt);
-  box('collector', 'waterTop', -0.5, 17.35, 0, 54, 0.1, 2.24, tilt);
-  pipe('collector', 'metal', flowLines[0].slice(3, 6), 0.65);
-  tray('tank', -26, -18, 23, 15, 4.65, 8.1, 4.1, 'edge');
-  label('tank', 'D', -26, 7, -10.24, 3.3, 1.6, '#2e4948', '#deeee8');
-  for (const x of [-31, -21])
-    for (const z of [-12, -5]) box('filter', 'steel', x, 9, z, 0.5, 8.4, 0.5);
-  tray('filter', -26, -8.3, 10.8, 7.5, 12.7, 2.75, 0, 'metal', 'ink');
-  lift = 5; // Cartucho de malla extraíble.
-  for (let k = -4; k <= 4; k += 0.75)
-    box('filter', 'steel', -26 + k, 15.37, -8.3, 0.29, 0.24, 6.8);
-  for (let k = -3; k <= 3; k += 1.15)
-    box('filter', 'metal', -26, 15.5, -8.3 + k, 10, 0.22, 0.17);
-  lift = 0;
-  pipe(
-    'filter',
-    'white',
-    [
-      [-26, 12.7, -10],
-      [-26, 12.7, -13.4],
-      [-26, 10.1, -13.4],
-    ],
-    0.77,
-  );
-  rod('p1', 'ink', [-32, 13.9, 9], [-32, 13.9, 5.5], 1.38);
-  box('p1', 'blue', -32, 13.9, 5.4, 2.45, 2.25, 1.8);
-  pipe('p1', 'hose', flowLines[1], 0.62);
-  pipe('irrigation', 'hose', flowLines[2], 0.48);
-  for (const [x, y, z] of [
-    [-34, 16, -1],
-    [-34, 16, 5],
-    [-12, 6, -15.5],
-  ])
-    rod(
-      x === -12 ? 'irrigation' : 'p1',
-      'metal',
-      [x, y, z - 0.28],
-      [x, y, z + 0.28],
-      0.79,
-    );
-  rod('irrigation', 'ink', [-17, 6, -15.5], [-14, 6, -15.5], 1.1);
-  pipe(
-    'emergency',
-    'hose',
-    [
-      [-37, 11, -18],
-      [-38.3, 11, -18],
-      [-38.3, 6, -18],
-      [-38.3, 6, -2],
-      [-11, 6, -2],
-      [34, 6, -2],
-      [34, 4, -2],
-    ],
-    0.38,
-  );
+  // Conducto primario y unión a 90° en el centro exacto entre A y B.
+  rod('pipe', 'blue', [-16,17,15], [-1.1,17,15], 1.16);
+  rod('pipe', 'blue', [1.1,17,15], [18,17,15], 1.16);
+  for (const x of [-16,-10,11,18])
+    rod('pipe', 'metal', [x-.27,17,15], [x+.27,17,15], 1.42);
+  rod('junction', 'brass', [-1.55,17,15], [1.55,17,15], 1.48);
+  rod('junction', 'brass', tee, [0,17,12.7], 1.4);
+  pipe('junction', 'blue', [[0,17,12.7], ...branch.slice(1)], .95);
+  box('gate', 'steel', 0,17.1,8.3,3.1,3.1,1.45);
+  box('gate', 'blue', 2.25,19.65,8.4,2.8,3.55,2.75);
+  rod('gate','brass',[2.25,21.55,8.4],[0,21.55,8.4],.23);
+  rod('gate','metal',[0,18.4,8.4],[0,21.55,8.4],.22);
+
+  for (const x of [-4.5,4.5]) for (const z of [-6.2,1.6])
+    box('filter','steel',x,9.5,z,.58,7,.58);
+  tray('filter',0,-2.4,10.6,7.5,12.7,2.75,0,'metal','ink');
+  box('filter','olive',0,14,-2.4,9.5,.9,6.5);
+  lift = 2.3;
+  for (let k=-4; k<=4; k+=.75) box('filter','steel',k,15.5,-2.4,.24,.2,6.9);
+  for (let k=-3; k<=3; k+=.8) box('filter','metal',0,15.63,-2.4+k,9.8,.2,.2);
+  lift=0;
+  pipe('filter','white',discharge.slice(0,-1),.78);
+  tray('tank',0,-19,16,14,4.65,7.4,3.1);
+  label('tank','EF',0,7.4,-11.76,3.4,1.6,'#244948','#e1f3ea');
+  pipe('pump','hose',delivery.slice(0,2),.59);
+  rod('pump','ink',[9.3,8,-20],[12.8,8,-20],1.65);
+  rod('pump','metal',[11.7,8,-20],[12.1,8,-20],1.73);
+  box('pump','blue',13.1,8,-20,1.8,2.9,2.95);
+  pipe('irrigation','hose',delivery.slice(1),.56);
+  for (const z of [-17,-11]) rod('irrigation','brass',[16,8,z-.25],[16,8,z+.25],.76);
   // Caja seca ventilada, placa del microcontrolador visible bajo cubierta ahumada.
   for (const x of [19, 33])
     for (const z of [-24, -12]) box('control', 'steel', x, 5.6, z, 1.3, 2, 1.3);
@@ -617,8 +518,14 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
     '#233a31',
   );
   for (const [i, c] of ['green', 'amber', 'red'].entries())
-    ell('lcd', c, 31.1 + i * 0.75, 9.6, -9.05, 0.27, 0.27, 0.22);
+    ell('leds', c, 31.1 + i * 0.75, 9.6, -9.05, 0.27, 0.27, 0.22);
 
+  box('driver','red',32.6,12.1,-22,4.2,.38,4.5);
+  for(let k=0;k<6;k++) box('driver','ink',31.2+.51*k,13.0,-22,.21,1.65,2.5);
+  box('driver','blue',32.6,12.65,-24.25,3.6,.96,.75);
+  rod('ldr','brass',[19.2,12.2,-22],[19.2,13.8,-22],.11);
+  rod('ldr','amber',[19.2,13.7,-22],[19.2,14,-22],.84);
+  for(let k=0;k<4;k++) box('ldr','ink',19.2,14.03,-22.45+.3*k,.82,.06,.075);
   // Arquitectura de la cuadra. Unidades de maqueta; la vía y la vereda comparten bordillo.
   under = false;
   layer = 'siempre';
@@ -722,36 +629,24 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
   layer = 'subsuelo';
   slab('base', 'excavation', -39.9, 39.9, -29.9, 29.9, 2.21, 0.14);
   // El contorno en planta deja el depósito y la caja seca enteros delante de la cara de tierra.
-  const cutPerimeter = [
-    [-40, -28.3],
-    [-10.7, -28.3],
-    [-10.7, -20.75],
-    [12.7, -20.75],
-    [12.7, -28.3],
-    [40, -28.3],
-    [40, -30],
-    [-40, -30],
-  ];
+  const cutPerimeter = [[-40,-29], [40,-29], [40,-30], [-40,-30]];
   cutPerimeter.forEach((a, i) => {
     const b = cutPerimeter[(i + 1) % cutPerimeter.length];
     for (let j = 0; j < strata.length - 1; j++)
       earthFace(a, b, strata[j], strata[j + 1]);
   });
-  slab('base', 'aggregate', -16, 21, -25, -8.45, 19.37, 1.05);
-  slab('base', 'subsoil', -16, 21, -25, -8.45, 18.33, 0.95);
-  slab('base', 'aggregate', -40, 40, -30, -24.8, 19.37, 0.29);
+  slab('base', 'aggregate', -40, 40, -30, -29, 19.37, 0.29);
   // El perfil lateral de la losa y el fondo excavado delimitan la sección.
   layer = 'cubierta';
-  // Calzada y cuneta con tres huecos abiertos. La capa de rodadura no atraviesa las rejillas.
+  // Calzada y cuneta con dos huecos abiertos. La capa de rodadura no atraviesa las rejillas.
   const stations = [
-    ['a1', -25],
-    ['a2', 0],
-    ['a3', 25],
+    ['a', -25],
+    ['b', 25],
   ];
   const gutterBack = -2.35,
     gutterFront = 4.5,
     grateZ = 1,
-    grateW = 8.4,
+    grateW = 10.8,
     grateD = 4.85;
   slab('base', 'asphalt', -40, 40, gutterFront, 30, ROAD, 0.61);
   slab('base', 'gutter', -40, 40, gutterBack, grateZ - grateD / 2, ROAD, 0.61);
@@ -805,8 +700,7 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
         f = zs[j + 1];
       if (l >= bed.left && r <= bed.right && b >= bed.back && f <= bed.front)
         continue;
-      const terrace = l >= -16 && r <= 21 && f <= bed.front;
-      layer = j === 0 || terrace ? 'siempre' : 'cubierta';
+      layer = 'cubierta';
       slab('base', 'joint', l, r, b, f, WALK - 0.11, 1.5);
       slab(
         'base',
@@ -893,14 +787,15 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
         0.4,
       );
     }
+    layer = 'cubierta'; // Al retirar la rejilla se ven el sensor y el eje desde arriba.
     for (let k = 0; k < 11; k++)
       box(
         id,
         'cast',
-        x - 3.55 + k * 0.71,
+        x + ((k - 5) / 11) * (grateW - .6),
         ROAD - 0.075,
         grateZ,
-        0.32,
+        0.40,
         0.29,
         grateD - 0.45,
       );
@@ -924,7 +819,7 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
         );
     // En el corte queda un cuello abierto que vincula cada boca con su cámara.
     layer = 'subsuelo';
-    const lower = below(x, id === 'a1' ? 24.7 : 22.7, 15)[1];
+    const lower = below(x, id === 'a' ? 24.7 : 22.7, 15)[1];
     for (const side of [-1, 1]) {
       for (const s of [-1, 1])
         box(
@@ -941,8 +836,8 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
     box(id, 'metal', x, lower + 0.12, grateZ - grateD / 2, grateW, 0.3, 0.34);
   }
 
-  // Lecho de tierra contenido en la vereda. Una franja transversal queda visible en el corte.
-  layer = 'siempre';
+  // La losa verde es desmontable para inspeccionar el estanque situado debajo.
+  layer = 'cubierta';
   slab(
     'garden',
     'subsoil',
@@ -1148,7 +1043,8 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
     }
   }
 
-  // Sólo el emisor del riego queda sobre el terreno. La montante pertenece a P2.
+  // La boquilla sigue visible con la losa retirada.
+  layer = 'siempre';
   rod(
     'sprinkler',
     'ink',
@@ -1210,15 +1106,7 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
     groups[id].add(obj);
   }
   const beads = [];
-  const allLines = [
-    ...flowLines,
-    ...[-25, 0].map((x) => [
-      [x, 19.5, 7],
-      [x, 19.2, 1],
-      [x, 16.9 + (x + 26) * 0.032, 0],
-    ]),
-  ];
-  allLines.forEach((line, i) => {
+  flowLines.forEach((line) => {
     const curve = new T.CurvePath();
     line
       .slice(1)
@@ -1231,7 +1119,7 @@ export function buildAssembly({ compact = false, brand = 'Pluvia' } = {}) {
         ),
       );
     const mat = new T.MeshBasicMaterial({
-      color: i === 3 ? 0xffbc6e : 0x79eddf,
+      color: 0x67f4dc,
       depthTest: false,
     });
     for (let j = 0; j < 4; j++) {

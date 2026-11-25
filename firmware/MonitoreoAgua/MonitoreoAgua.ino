@@ -2,6 +2,8 @@
   Maqueta: tres alcantarillas, mecanismos solo en A1 y riego compartido.
   ESP32 CLASICO WROOM: JSN-SR04T en A1, HC-SR04 en A2/A3.
   LCD 16x2 PARALELA (sin I2C) y LDR comun + 10k. Deposito opcional.
+  Dos L298N: motor y evacuacion en el primero, riego en el segundo.
+  Pluvia recibe por Wi-Fi las capturas del montaje fisico.
   Wokwi: los LED representan el motor y las dos bombas; no simula agua.
   Nivel alto persistente = POSIBLE atasco, no confirmacion de obstruccion.
 */
@@ -73,7 +75,10 @@ bool geometriaValida(uint8_t i) {
   const Sensor &s = SENSORES[i];
   return isfinite(s.minimoCm) && isfinite(s.maximoCm) && isfinite(s.vacioCm) &&
          isfinite(s.llenoCm) && s.minimoCm > 0 && s.maximoCm > s.minimoCm &&
-         s.vacioCm <= s.maximoCm && s.llenoCm >= s.minimoCm && s.vacioCm > s.llenoCm;
+         s.vacioCm <= s.maximoCm && s.vacioCm >= s.minimoCm &&
+         s.llenoCm >= 0 && s.vacioCm > s.llenoCm;
+  // La profundidad logica puede terminar en distancia cero, aunque el sensor
+  // deje de medir antes: registrarDistancia rechaza cada eco en la zona ciega.
 }
 
 void registrarDistancia(uint8_t i, float distancia, uint32_t ahora) {
@@ -342,13 +347,8 @@ void actualizarSerial(uint32_t ahora) {
   Serial.println(lecturaLdr);
 }
 
-void escribirIndicadores(uint8_t bits) {
-  static int anterior = -1;
-  if (!USAR_74HC595 || anterior == bits) return;
-  digitalWrite(SR_LATCH, LOW);
-  shiftOut(SR_DATOS, SR_RELOJ, MSBFIRST, bits);
-  digitalWrite(SR_LATCH, HIGH);
-  anterior = bits;
+void activarLed(uint8_t indice, bool encendido) {
+  digitalWrite(LEDS[indice], encendido == LED_ACTIVO_HIGH[indice] ? HIGH : LOW);
 }
 
 void actualizarIndicadores(uint32_t ahora) {
@@ -362,16 +362,9 @@ void actualizarIndicadores(uint32_t ahora) {
   bool verde = fallo ? parpadeo : !alto && !precaucion;
   bool amarillo = fallo ? parpadeo : !alto && precaucion;
   bool rojo = alto || (fallo && parpadeo);
-  bool sonar = alto && (ahora/500UL)%2 == 0;
-  if (USAR_74HC595) {
-    uint8_t bits = (verde ? 1 : 0) | (amarillo ? 2 : 0) |
-                   (rojo ? 4 : 0) | (sonar ? 0 : 8);
-    escribirIndicadores(bits);
-  }
-  if (LED_VERDE >= 0) digitalWrite(LED_VERDE, verde);
-  if (LED_AMARILLO >= 0) digitalWrite(LED_AMARILLO, amarillo);
-  if (LED_ROJO >= 0) digitalWrite(LED_ROJO, rojo);
-  if (PIN_BUZZER >= 0) digitalWrite(PIN_BUZZER, sonar ? LOW : HIGH);
+  activarLed(0, verde);
+  activarLed(1, amarillo);
+  activarLed(2, rojo);
 }
 
 const char *nombreEtapa() {
@@ -426,24 +419,28 @@ void actualizarLCD(uint32_t ahora) {
 #include "Captura.h"
 #if defined(ARDUINO_ARCH_ESP32)
 #include <esp_timer.h>
+#include <esp_system.h>
 #endif
+
+void prepararSalida(uint8_t pin, uint8_t nivelInicial) {
+  // En el nucleo ESP32 3.x, digitalWrite requiere un pin ya registrado como GPIO.
+  // Precargar el nivel en alta impedancia evita un pulso al pasar a salida.
+  pinMode(pin, INPUT);
+  digitalWrite(pin, nivelInicial);
+  pinMode(pin, OUTPUT);
+}
 
 void setup() {
   Serial.begin(115200);
-  if (USAR_74HC595) {
-    digitalWrite(SR_OE, HIGH);
-    pinMode(SR_OE, OUTPUT);
-    for (int pin : {SR_DATOS, SR_RELOJ, SR_LATCH}) {
-      digitalWrite(pin, LOW);
-      pinMode(pin, OUTPUT);
-    }
-    escribirIndicadores(8); // LED apagados y buzzer en silencio ANTES de habilitar.
-    digitalWrite(SR_OE, LOW);
+#if defined(ARDUINO_ARCH_ESP32)
+  if (RedConfig::DIAGNOSTICO_RED_USB) {
+    Serial.println("RED,FW_PLUVIA_WIFI");
+    Serial.printf("RED,REINICIO_CAUSA,%d\n", int(esp_reset_reason()));
+    Serial.flush();
   }
+#endif
   for (uint8_t i = 0; i < 3; i++) {
-    digitalWrite(SALIDAS[i], ACTIVO_HIGH[i] ? LOW : HIGH);
-    pinMode(SALIDAS[i], OUTPUT);
-    activar(i, false);
+    prepararSalida(SALIDAS[i], ACTIVO_HIGH[i] ? LOW : HIGH);
   }
   for (uint8_t i = 0; i < 4; i++) {
     if (!SENSORES[i].instalado) continue;
@@ -451,11 +448,8 @@ void setup() {
     digitalWrite(SENSORES[i].trig, LOW);
     pinMode(SENSORES[i].echo, INPUT);
   }
-  const int indicadores[] = {LED_VERDE, LED_AMARILLO, LED_ROJO, PIN_BUZZER};
-  for (int pin : indicadores) {
-    if (pin < 0) continue;
-    digitalWrite(pin, pin == PIN_BUZZER ? HIGH : LOW);
-    pinMode(pin, OUTPUT);
+  for (uint8_t i=0; i<3; ++i) {
+    prepararSalida(LEDS[i], LED_ACTIVO_HIGH[i] ? LOW : HIGH);
   }
   pinMode(PIN_LDR, INPUT);
   analogReadResolution(12);
@@ -488,6 +482,7 @@ void loop() {
     ultimaCaptura = ahora;
     Telemetria::ofrecer(capturarSistema(ahora, esp_timer_get_time() / 1000, ++secuencia));
   }
+  if (!SIMULACION_WOKWI) Telemetria::informarPorUSB();
 #endif
   delay(1); // Cede tiempo al sistema; no implementa los temporizadores.
 }

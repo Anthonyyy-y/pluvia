@@ -3,7 +3,9 @@ import math
 
 SCENARIOS = ("normal", "a1_rise", "intervention", "a2_alert", "a3_alert", "sensor_error",
              "tank_missing", "tank_full", "offline", "recovery")
-GEOMETRY = {"A1": (60, 30), "A2": (20, 4), "A3": (20, 4), "DEPOSITO": (25, 5)}
+# Referencia de demostracion: desagues de 10 cm de altura util.
+# Las distancias sensor-fondo son ilustrativas; A1 conserva el sensor elevado.
+GEOMETRY = {"A1": (40, 30), "A2": (14, 4), "A3": (14, 4), "DEPOSITO": (25, 5)}
 
 
 def sample(name, percent, installed=True, fault=None):

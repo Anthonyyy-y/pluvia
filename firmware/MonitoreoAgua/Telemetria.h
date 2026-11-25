@@ -32,4 +32,5 @@ size_t codificar(const Muestra &m, const char *dispositivo, const char *arranque
 void iniciar();
 bool activa();
 void ofrecer(const Muestra &m);
+void informarPorUSB();
 }

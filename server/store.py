@@ -107,8 +107,9 @@ class Store:
                 if past["body"] == body:
                     return False
                 raise Problem(409,"La misma secuencia ya contiene otra muestra.")
+            last_packet = json.loads(previous["body"]) if previous["body"] else None
             if previous["boot"] == boot:
-                if seq <= previous["seq"] or data["uptime_ms"] < json.loads(previous["body"])["uptime_ms"]:
+                if seq <= previous["seq"] or data["uptime_ms"] < last_packet["uptime_ms"]:
                     raise Problem(409,"Muestra atrasada del mismo arranque.")
             elif db.execute("SELECT 1 FROM readings WHERE scope=? AND boot=? LIMIT 1", (scope,boot)).fetchone():
                 raise Problem(409,"Paquete procedente de un arranque anterior.")
@@ -116,6 +117,24 @@ class Store:
                              (scope,boot,seq,now,body)).lastrowid
             db.execute("UPDATE scopes SET latest=?,revision=revision+1,touched=? WHERE scope=?", (row,now,scope))
             self._connection(db,scope,previous["connection"],"connected",now)
+            if last_packet and last_packet["version"] != data["version"]:
+                # Las incidencias del montaje retirado pasan al archivo con su hora de cierre.
+                abiertos = db.execute("""SELECT id FROM incidents WHERE scope=? AND resolved IS NULL
+                    AND key NOT IN ('stale','offline')""", (scope,)).fetchall()
+                for incidente in abiertos:
+                    db.execute("UPDATE incidents SET resolved=? WHERE id=?", (now, incidente["id"]))
+                    db.execute("INSERT INTO transitions VALUES(?,?,?)", (incidente["id"], now, "resolved"))
+            if data["version"] == 2:
+                for lectura in data["lecturas"]:
+                    sensor, nivel = lectura["sensor"], lectura["valor"]
+                    for key, active, severity, descripcion in (
+                        ("fault", nivel is None, "critical", "sin eco válido"),
+                        ("warning", nivel is not None and 5 <= nivel < 8, "warning", "nivel en precaución"),
+                        ("high", nivel is not None and nivel >= 8, "critical", "nivel en alerta"),
+                    ):
+                        self._condition(db, scope, sensor + "_" + key, sensor, severity,
+                                        f"{sensor}: {descripcion}.", active, now)
+                return True
             for name in POINTS:
                 p = data["points"][name]
                 self._condition(db,scope,name+"_fault",name,"critical",
@@ -163,7 +182,10 @@ class Store:
                     SELECT received,body FROM readings JOIN bins USING(id) ORDER BY received""",
                               (scope,start,now,start,hours*3600/720)).fetchall()
         def entry(row):
-            points = json.loads(row["body"])["points"]
+            packet = json.loads(row["body"])
+            if packet["version"] == 2:
+                return dict(received_at=iso(row["received"]), **{r["sensor"]: r["valor"] for r in packet["lecturas"]})
+            points = packet["points"]
             return dict(received_at=iso(row["received"]), **{k:points[k]["height_cm"] for k in POINTS})
         return {"rows":[entry(r) for r in rows], "units":"cm", "hours":hours, "max_bins":720}
 
@@ -199,7 +221,7 @@ class Store:
                          "instalado","valido","estado","fallo","distancia_cm","altura_cm","altura_util_pct","edad_ms",
                          "calibracion_confirmada","vacio_cm","lleno_cm","motor_orden","compuerta_orden_grados",
                          "evacuacion_orden","riego_orden","etapa","deposito_admite_agua","deposito_permite_riego",
-                         "ldr_adc","luz_suficiente","rssi_dbm"])
+                         "ldr_adc","luz_suficiente","rssi_dbm","reserva_estimada_s","muestra_ts_ms","compuerta_abierta"])
         yield ("\ufeff"+out.getvalue()).encode("utf-8")
         end = time.time()
         after = 0
@@ -214,6 +236,17 @@ class Store:
             for row in rows:
                 d = json.loads(row["body"])
                 base = [iso(row["received"]),d["source"],d["device_id"],d["boot_id"],d["seq"],d["uptime_ms"]]
+                if d["version"] == 2:
+                    for r in d["lecturas"]:
+                        v = r["valor"]
+                        status = "ERROR" if v is None else "ALERTA" if v >= 8 else "PRECAUCION" if v >= 5 else "NORMAL"
+                        fields = [r["sensor"], True, v is not None, status, "SIN_ECO" if v is None else None,
+                                  None, v, None, d["uptime_ms"]-r["ts"], None, None, None]
+                        outputs = [r["motorEstado"], None, None, r["bombaEstado"], None, None, None, None,
+                                   r["luz"], None, r["reservaEstimadaS"], r["ts"], r["compuertaAbierta"]]
+                        writer.writerow([("'" + v if isinstance(v,str) and v.startswith(("-","=","+","@")) else v)
+                                         for v in base + fields + outputs])
+                    continue
                 o,t,l = d["outputs"],d["tank"],d["light"]
                 tail = [o["motor"],o["gate_deg"],o["drain"],o["irrigation"],o["stage"],t["can_receive"],t["can_irrigate"],
                         l["adc"],l["daylight"],d["network"]["rssi_dbm"]]
@@ -221,7 +254,7 @@ class Store:
                     fields = [name]+[p[k] for k in ("installed","valid","state","reason","distance_cm","height_cm","height_pct","age_ms")]
                     fields.extend(p["calibration"][k] for k in ("confirmed","empty_cm","full_cm"))
                     writer.writerow([("'" + v if isinstance(v,str) and v.startswith(("-","=","+","@")) else v)
-                                     for v in base+fields+tail])
+                                     for v in base+fields+tail+[None,None,None]])
             after = rows[-1]["id"]
             yield out.getvalue().encode("utf-8")
 

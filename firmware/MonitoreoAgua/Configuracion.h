@@ -22,17 +22,23 @@ struct Sensor {
   bool instalado;
 };
 
-// MEDIDAS DE EJEMPLO: reemplazar por las de la maqueta.
-// A1: JSN-SR04T en modo TRIG/ECHO, como el firmware original.
-// Su version exacta NO esta verificada. 25 cm es un limite provisional
-// conservador, NO una especificacion confirmada de la unidad del usuario.
-// Mantener el agua por debajo de la cara del sensor; nunca ponerlo en 4 cm.
+// Profundidad del desague confirmada por el usuario: 10 cm = 100%.
+constexpr float PROFUNDIDAD_DESAGUE_CM = 10.0f;
+// Distancia desde la CARA DEL SENSOR al fondo vacio, confirmada: 10 cm.
+// Al elevar un sensor hay que actualizar SOLO su distancia en esta lista.
+// No cambiar la profundidad del desague cuando se eleva el soporte.
+constexpr float DISTANCIA_FONDO_CM[3] = {10.0f, 10.0f, 10.0f};
+// A1: esta altura de montaje es incompatible con el limite provisional JSN
+// de 25 cm. Se informa ERROR y se inhiben sus cargas hasta elevarlo y medirlo.
+// Para cubrir 10 cm de agua con margen, un montaje ilustrativo es 40/30 cm.
+// A2/A3: con fondo a10cm, por encima de8cm de agua quedan fuera del rango HC.
+// Para cubrir hasta el borde, elevarlos y volver a medir (ejemplo14/4cm).
 constexpr Sensor SENSORES[4] = {
-  {13, 34, 25.0f, 600.0f, 60.0f, 30.0f, true}, // A1 JSN-SR04T
-  {14, 35,  2.0f, 400.0f, 20.0f,  4.0f, true}, // A2 HC-SR04
-  {18, 36,  2.0f, 400.0f, 20.0f,  4.0f, true}, // A3 HC-SR04
-  {19, 39,  2.0f, 400.0f, 25.0f,  5.0f, SENSOR_DEPOSITO_INSTALADO}
-}; // La ultima fila prepara un HC-SR04 OPCIONAL, aun no confirmado.
+  {13, 34, 25.0f, 600.0f, DISTANCIA_FONDO_CM[0], DISTANCIA_FONDO_CM[0]-PROFUNDIDAD_DESAGUE_CM, true},
+  {14, 35,  2.0f, 400.0f, DISTANCIA_FONDO_CM[1], DISTANCIA_FONDO_CM[1]-PROFUNDIDAD_DESAGUE_CM, true},
+  {18, 36,  2.0f, 400.0f, DISTANCIA_FONDO_CM[2], DISTANCIA_FONDO_CM[2]-PROFUNDIDAD_DESAGUE_CM, true},
+  {19, 39,  2.0f, 400.0f, 25.0f, 5.0f, SENSOR_DEPOSITO_INSTALADO}
+}; // El deposito tiene geometria independiente; su sensor sigue pendiente.
 
 constexpr uint8_t PIN_MOTOR = 27, PIN_DRENAJE = 16, PIN_RIEGO = 17;
 constexpr uint8_t PIN_SERVO = 23, PIN_LDR = 32;
@@ -43,16 +49,15 @@ constexpr uint8_t SALIDAS[3] = {PIN_MOTOR, PIN_DRENAJE, PIN_RIEGO};
 constexpr bool ACTIVO_HIGH[3] = {true, true, true};
 constexpr int ANGULO_CERRADO = 0, ANGULO_ABIERTO = 90;
 
-// Los indicadores antiguos se conservan como opcion, sin reasignarlos sobre
-// las salidas nuevas. -1 significa no instalado. Ver guia sobre GPIO libres.
-constexpr int LED_VERDE = -1, LED_AMARILLO = -1, LED_ROJO = -1;
-constexpr int PIN_BUZZER = -1; // MH-FMD activo LOW, si se habilita.
-// Conserva los 3 LED y el buzzer mediante UN 74HC595 a 3,3 V.
-// Los GPIO de arranque solo van a ENTRADAS CMOS del registro, nunca a LED.
-// /OE lleva pull-up 10k a 3V3: salidas deshabilitadas durante el arranque.
-constexpr bool USAR_74HC595 = true;
-constexpr int SR_DATOS = 2, SR_RELOJ = 5, SR_LATCH = 15, SR_OE = 0;
-// Q0=verde, Q1=amarillo, Q2=rojo, Q3=buzzer (HIGH = silencio).
+// Revision 23 NOV: sin buzzer y sin 74HC595. Los 3 LED van directos.
+// Verde: GPIO2 -> resistencia 1k -> anodo; catodo -> GND (activo HIGH).
+// Amarillo: 3V3 -> resistencia 1k -> anodo; catodo -> GPIO5 (activo LOW).
+// Rojo: 3V3 -> resistencia 1k -> anodo; catodo -> GPIO15 (activo LOW).
+// Esta orientacion respeta GPIO2 bajo y GPIO5/15 altos al arrancar.
+// No invertirlos ni usar 5V; GPIO0 queda sin conexion externa.
+constexpr uint8_t LED_VERDE = 2, LED_AMARILLO = 5, LED_ROJO = 15;
+constexpr uint8_t LEDS[3] = {LED_VERDE, LED_AMARILLO, LED_ROJO};
+constexpr bool LED_ACTIVO_HIGH[3] = {true, false, false};
 
 constexpr uint32_t INTERVALO_RIEGO_MS = MODO_DEMO ? 15000UL : 600000UL;
 constexpr uint32_t DURACION_RIEGO_MS = 5000;
@@ -79,9 +84,7 @@ constexpr int PINES[] = {SENSORES[0].trig,SENSORES[0].echo,SENSORES[1].trig,SENS
                         SENSORES[2].trig,SENSORES[2].echo,SENSORES[3].trig,SENSORES[3].echo,
                         PIN_MOTOR,PIN_DRENAJE,PIN_RIEGO,PIN_SERVO,PIN_LDR,
                         LCD_RS,LCD_EN,LCD_D4,LCD_D5,LCD_D6,LCD_D7,
-                        LED_VERDE,LED_AMARILLO,LED_ROJO,PIN_BUZZER,
-                        USAR_74HC595 ? SR_DATOS : -1, USAR_74HC595 ? SR_RELOJ : -1,
-                        USAR_74HC595 ? SR_LATCH : -1, USAR_74HC595 ? SR_OE : -1};
+                        LED_VERDE,LED_AMARILLO,LED_ROJO};
 constexpr bool pinesValidos() {
   for (unsigned i=0; i<sizeof(PINES)/sizeof(PINES[0]); ++i) {
     if (PINES[i] < 0) continue;
@@ -94,17 +97,14 @@ constexpr bool pinesValidos() {
   const int salidas[] = {PIN_MOTOR,PIN_DRENAJE,PIN_RIEGO,PIN_SERVO,
                         LCD_RS,LCD_EN,LCD_D4,LCD_D5,LCD_D6,LCD_D7};
   for (int p : salidas) if (!salidaPermitida(p)) return false;
-  if (USAR_74HC595) {
-    const int registro[] = {SR_DATOS,SR_RELOJ,SR_LATCH,SR_OE};
-    for (int p : registro)
-      if (!(salidaPermitida(p) || p == 0 || p == 2 || p == 5 || p == 15)) return false;
+  for (unsigned i=0; i<3; ++i) {
+    int p=LEDS[i];
+    bool permitido=salidaPermitida(p) || (p==2 && LED_ACTIVO_HIGH[i]) ||
+                   ((p==5 || p==15) && !LED_ACTIVO_HIGH[i]);
+    if (!permitido) return false;
   }
-  return (PIN_LDR == 32 || PIN_LDR == 33 || PIN_LDR == 34 || PIN_LDR == 35 ||
-          PIN_LDR == 36 || PIN_LDR == 39) &&
-         (LED_VERDE < 0 || salidaPermitida(LED_VERDE)) &&
-         (LED_AMARILLO < 0 || salidaPermitida(LED_AMARILLO)) &&
-         (LED_ROJO < 0 || salidaPermitida(LED_ROJO)) &&
-         (PIN_BUZZER < 0 || salidaPermitida(PIN_BUZZER));
+  return PIN_LDR == 32 || PIN_LDR == 33 || PIN_LDR == 34 || PIN_LDR == 35 ||
+         PIN_LDR == 36 || PIN_LDR == 39;
 }
 static_assert(pinesValidos(), "GPIO repetidos o indicadores en GPIO no permitidos");
 static_assert(NIVEL_RECUPERADO < NIVEL_ALTO, "Revisar histeresis del nivel");

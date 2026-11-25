@@ -8,18 +8,23 @@ export function createViewer(
 ) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const compact = matchMedia('(max-width: 760px)').matches;
-  const renderer = new T.WebGLRenderer({
+  // Detectar la disponibilidad antes del constructor permite mostrar los planos
+  // directamente en navegadores que tienen desactivada la aceleración gráfica.
+  const canvas = document.createElement('canvas');
+  const options = {
     antialias: true,
     alpha: true,
     powerPreference: 'low-power',
     preserveDrawingBuffer: false,
-  });
+  };
+  const context = canvas.getContext('webgl2', options);
+  if (!context) throw new Error('WebGL 2 no está disponible');
+  const renderer = new T.WebGLRenderer({ canvas, context, ...options });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, compact ? 1.35 : 1.7));
   renderer.shadowMap.enabled = !compact;
   renderer.shadowMap.type = T.PCFSoftShadowMap;
   renderer.outputColorSpace = T.SRGBColorSpace;
   renderer.setClearColor(0x000000, 0);
-  const canvas = renderer.domElement;
   canvas.tabIndex = 0;
   canvas.setAttribute('role', 'group');
   canvas.setAttribute(
@@ -106,21 +111,28 @@ export function createViewer(
   const pinLayer = document.createElement('div');
   pinLayer.className = 'pins';
   host.append(pinLayer);
-  const pinsInCut = new Set([
-    'a1',
-    'a2',
-    'a3',
-    'control',
-    'filter',
-    'tank',
-    'irrigation',
-    'garden',
-    'sprinkler',
-  ]);
-  // La lista de fichas mantiene accesibles también las piezas pequeñas del corte.
-  const named = hero
-    ? []
-    : Object.keys(anchors).filter((id) => modules[id] && id !== 'base');
+  const named = hero ? [] : Object.keys(anchors).filter((id) => modules[id]);
+  const tooltip = document.createElement('span');
+  tooltip.className = 'model-tooltip';
+  tooltip.hidden = true;
+  host.append(tooltip);
+  let hovered = null;
+  function hover(id, clientX, clientY) {
+    if (!id) {
+      tooltip.hidden = true;
+    } else {
+      tooltip.textContent = modules[id].name;
+      tooltip.hidden = false;
+      const rect = host.getBoundingClientRect();
+      const left = Math.max(5, Math.min(rect.width - tooltip.offsetWidth - 5, clientX - rect.left + 10));
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = Math.max(4, Math.min(rect.height - 34, clientY - rect.top - 33)) + 'px';
+    }
+    if (hovered === id) return;
+    hovered = id;
+    assembly.highlight(hovered || selection);
+    change();
+  }
   named.forEach((id) => {
     const b = document.createElement('button');
     b.type = 'button';
@@ -129,12 +141,20 @@ export function createViewer(
     b.textContent = modules[id].code;
     b.title = modules[id].name;
     b.setAttribute('aria-label', modules[id].name);
-    b.addEventListener('click', () => onSelect(id));
+    b.addEventListener('click', () => { hover(null); onSelect(id); });
+    b.addEventListener('pointerenter', e => hover(id, e.clientX, e.clientY));
+    b.addEventListener('pointerleave', () => hover(null));
+    b.addEventListener('focus', () => {
+      const r = b.getBoundingClientRect();
+      hover(id, r.left + r.width/2, r.top);
+    });
+    b.addEventListener('blur', () => hover(null));
     pins.set(id, b);
     pinLayer.append(b);
   });
   const byId = Object.values(assembly.groups);
   function currentAnchor(id) {
+    if (cutOpen && id === 'garden') return null;
     return (cutOpen ? anchors : surfaceAnchors)[id];
   }
   function visibleHit(object) {
@@ -197,22 +217,35 @@ export function createViewer(
     if (animateFlow) clock += dt;
     assembly.flow(flowing, clock);
     const v = new T.Vector3();
+    const occupied = [];
     pins.forEach((b, id) => {
       const anchor = currentAnchor(id);
       b.hidden =
         !pointsOn ||
         !anchor ||
-        (cutOpen && !pinsInCut.has(id) && id !== selection) ||
         (zoom > 1.4 && id !== selection);
       if (b.hidden) return;
       v.fromArray(anchor).add(assembly.groups[id].position);
       v.y += id === 'sprinkler' ? 4.5 : 1.5;
       v.project(camera);
       const x = (v.x * 0.5 + 0.5) * w,
-        y = (0.5 - v.y * 0.5) * h;
-      b.hidden = x < 20 || x > w - 20 || y < 20 || y > h - 22;
+        tipY = (0.5 - v.y * 0.5) * h;
+      let y = tipY;
+      b.hidden = x < 8 || x > w - 8 || y < 8 || y > h - 4;
+      if (b.hidden) return;
+      const left = Math.max(18, Math.min(w - 18, x));
+      for (let step = 0; step < 12; step++) {
+        const offset = Math.ceil(step / 2) * 29 * (step % 2 ? -1 : 1);
+        const candidate = Math.max(25, Math.min(h - 8, tipY + offset));
+        if (!occupied.some(p => Math.abs(p.x - left) < 38 && Math.abs(p.y - candidate) < 27)) {
+          y = candidate;
+          break;
+        }
+      }
+      occupied.push({ x: left, y });
+      b.style.setProperty('--leader', Math.max(0, tipY - y) + 'px');
       b.style.transform =
-        'translate(' + x + 'px,' + y + 'px) translate(-50%,-100%)';
+        'translate(' + left + 'px,' + y + 'px) translate(-50%,-100%)';
       b.classList.toggle('active', selection === id);
     });
     renderer.render(scene, camera);
@@ -253,7 +286,12 @@ export function createViewer(
     canvas.setPointerCapture(e.pointerId);
   });
   canvas.addEventListener('pointermove', (e) => {
-    if (!pointer || pointer.id !== e.pointerId) return;
+    if (!pointer) {
+      if (!hero && e.pointerType === 'mouse') hover(hitComponent(e), e.clientX, e.clientY);
+      return;
+    }
+    if (pointer.id !== e.pointerId) return;
+    hover(null);
     const dx = e.clientX - pointer.x,
       dy = e.clientY - pointer.y;
     pointer.max = Math.max(pointer.max, Math.hypot(dx, dy));
@@ -271,6 +309,10 @@ export function createViewer(
     const click = pointer.max < 5;
     pointer = null;
     if (!click) return;
+    const id = hitComponent(e);
+    if (id) onSelect(id);
+  });
+  function hitComponent(e) {
     const rect = canvas.getBoundingClientRect();
     mouse.set(
       ((e.clientX - rect.left) / rect.width) * 2 - 1,
@@ -280,12 +322,11 @@ export function createViewer(
     const hit = ray
       .intersectObjects(byId, true)
       .find(({ object }) => visibleHit(object));
-    if (hit) {
-      let g = hit.object;
-      while (g && !g.userData.module) g = g.parent;
-      if (g) onSelect(g.userData.module);
-    }
-  });
+    let group = hit?.object;
+    while (group && !group.userData.module) group = group.parent;
+    return group?.userData.module;
+  }
+  canvas.addEventListener('pointerleave', () => hover(null));
   function reset() {
     cameraMode = 'general';
     goal = {
@@ -296,17 +337,21 @@ export function createViewer(
     target.set(0, (cutOpen ? 9.5 : 12) + explodeTo * 4, 0);
     change();
   }
-  function top() {
-    cameraMode = 'top';
-    goal = { az: 0, el: 1.535, zoom: 1 };
-    target.set(0, cutOpen ? 9.5 : 12, 0);
+  function preset(mode) {
+    if (!['pipes', 'front', 'covered'].includes(mode)) return;
+    cameraMode = mode;
+    cutOpen = mode !== 'covered';
+    assembly.cut(cutOpen);
+    hover(null);
+    goal = { az: 0, el: mode === 'front' ? .075 : 1.567, zoom: 1 };
+    target.set(0, mode === 'front' ? 10.8 : 11, 0);
     change();
   }
   function select(id, focus = false) {
     const anchor = currentAnchor(id);
     if (!anchor) return;
     selection = id;
-    assembly.highlight(id);
+    assembly.highlight(hovered || id);
     if (focus) {
       cameraMode = 'detail';
       target.fromArray(anchor).add(assembly.groups[id].position);
@@ -321,7 +366,6 @@ export function createViewer(
     assembly.cut(on);
     if (cameraMode === 'detail' && currentAnchor(selection))
       select(selection, true);
-    else if (cameraMode === 'top') top();
     else reset();
   }
   canvas.addEventListener('keydown', (e) => {
@@ -369,7 +413,7 @@ export function createViewer(
   return {
     reset,
     zoomBy,
-    top,
+    preset,
     select,
     cut,
     scrollView(progress) {
@@ -407,8 +451,9 @@ export function createViewer(
         return;
       }
       const related = {
-        a1: ['motor', 'gate'],
-        filter: ['tank'],
+        a: ['motor', 'sensorA'],
+        b: ['sensorB'],
+        filter: ['tank', 'pump', 'junction', 'gate', 'pipe'],
         garden: ['sprinkler'],
         sprinkler: ['garden'],
       };
@@ -419,11 +464,12 @@ export function createViewer(
       const anchor = currentAnchor(id);
       if (!anchor) return;
       target.fromArray(anchor);
+      if (id === 'a' || id === 'b') target.setY(13.2);
       goal = {
         az: 0.43,
         el: open ? 0.55 : 0.62,
         zoom:
-          { a1: 2.55, filter: 2.45, garden: 2.65, sprinkler: 3.05 }[id] || 2.55,
+          { a: 2.18, b: 2.35, filter: 2.15, garden: 2.35, sprinkler: 3.05 }[id] || 2.55,
       };
       cameraMode = 'detail';
       change();

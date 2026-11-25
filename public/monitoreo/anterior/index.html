@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#102d29" />
+    <meta name="robots" content="noindex" />
+    <title>Monitoreo · Pluvia</title>
+    <link rel="icon" href="/brand.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/monitoreo/anterior/panel.css" />
+    <script defer src="/config.js"></script>
+    <script defer src="/monitoreo/anterior/panel.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#principal">Saltar al contenido</a>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="/" aria-label="Volver a la presentación"
+          ><img src="/brand.svg" alt="" width="29" height="29" /><span
+            data-brand
+            >Pluvia</span
+          ></a
+        >
+        <span class="brand-divider"></span
+        ><span class="product">Supervisión</span>
+        <a class="back" href="/"
+          ><span aria-hidden="true">↖</span> Ver proyecto</a
+        >
+      </div>
+    </header>
+    <div class="source-strip demo" id="source-strip">
+      <div class="wrap">
+        <span class="source-dot" aria-hidden="true"></span
+        ><strong id="source-label">Modo demostración — datos simulados</strong
+        ><span id="stream-state" role="status">Iniciando conexión…</span>
+      </div>
+    </div>
+    <main id="principal" class="wrap">
+      <div class="page-title">
+        <div>
+          <p class="eyebrow"><span class="short-line"></span> TELEMETRÍA</p>
+          <h1>Monitor del perfil anterior</h1><p>Tres alcantarillas · telemetría v1. <a href="/monitoreo/">Abrir monitor de dos desagües ↗</a></p>
+        </div>
+        <div class="switch" role="group" aria-label="Origen de telemetría">
+          <button type="button" id="mode-demo" aria-pressed="true">
+            Demostración</button
+          ><button type="button" id="mode-real" aria-pressed="false">
+            Dispositivo real
+          </button>
+        </div>
+      </div>
+      <div id="message" class="message" role="status" hidden></div>
+      <section class="auth" id="auth" aria-labelledby="auth-title" hidden>
+        <p class="eyebrow">ACCESO RESTRINGIDO</p>
+        <h2 id="auth-title">Acceder al monitoreo real</h2>
+        <p>Ingresa la contraseña de supervisión configurada en el servidor.</p>
+        <form id="login">
+          <label for="password">Contraseña de supervisión</label>
+          <div class="input-line">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              maxlength="512"
+            /><button class="primary" type="submit">
+              Ingresar <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </form>
+        <p class="inline-error" role="status" id="login-error"></p>
+      </section>
+      <div id="dashboard">
+        <div class="selectors" id="scenarios">
+          <label for="scenario">Escenario de demostración</label>
+          <select id="scenario">
+            <option value="manual" disabled hidden>
+              Simulador externo por API
+            </option>
+            <option value="normal" selected>Funcionamiento normal</option>
+            <option value="a1_rise">Aumento de nivel en A1</option>
+            <option value="intervention">Intervención en A1</option>
+            <option value="a2_alert">Alerta en A2</option>
+            <option value="a3_alert">Alerta en A3</option>
+            <option value="sensor_error">Fallo de sensor</option>
+            <option value="tank_missing">Depósito sin sensor</option>
+            <option value="tank_full">Depósito lleno</option>
+            <option value="offline">Pérdida de conexión</option>
+            <option value="recovery">Recuperación del sistema</option>
+          </select>
+          <span id="scenario-note"></span>
+        </div>
+        <div class="selectors real-tools" id="real-tools" hidden>
+          <span>Acceso de supervisión</span
+          ><button type="button" class="text-button" id="logout">
+            Cerrar sesión
+          </button>
+        </div>
+        <div id="condition" class="condition" role="status" hidden></div>
+        <section class="overview" aria-labelledby="overview-title">
+          <div class="scheme-panel">
+            <div class="scheme-heading">
+              <div>
+                <p class="eyebrow">CIRCUNVALACIÓN SUR</p>
+                <h2 id="overview-title">Corte de la cuadra</h2>
+              </div>
+              <span class="scheme-tag">Esquema</span>
+            </div>
+            <svg
+              class="schematic"
+              viewBox="0 0 480 217"
+              role="img"
+              aria-labelledby="scheme-svg-title scheme-svg-desc"
+            >
+              <title id="scheme-svg-title">
+                Las tres alcantarillas bajo la cuneta y el parterre de la vereda
+              </title>
+              <desc id="scheme-svg-desc">
+                Las rejillas de A1, A2 y A3 están a ras de la calzada. Bajo la
+                calle, los ramales desembocan en la canaleta. P1 desvía agua de
+                A1 al filtro y la compuerta descarga a un recipiente de
+                emergencia independiente. El agua filtrada se almacena en el
+                depósito. Desde allí, la conducción de P2 sube hasta el
+                dispersor entre las plantas. Los niveles de las cámaras y el
+                depósito se actualizan con la telemetría.
+              </desc>
+              <defs>
+                <pattern
+                  id="dots"
+                  width="14"
+                  height="14"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <circle cx="1" cy="1" r=".8" fill="#6d928a" opacity=".4" />
+                </pattern>
+                <pattern
+                  id="mesh"
+                  width="4"
+                  height="4"
+                  patternUnits="userSpaceOnUse"
+                  patternTransform="rotate(45)"
+                >
+                  <path d="M0 0v4" stroke="#9acaba" stroke-width="1.5" />
+                </pattern>
+                <g
+                  id="planta-parterre"
+                  fill="#84a98a"
+                  stroke="#aed1a4"
+                  stroke-width=".8"
+                >
+                  <path
+                    d="M0 0q-9-1-10-10 8 1 10 10Zm0 0q0-13 7-18 3 12-7 18Zm0 0q5-8 12-7-3 7-12 7Z"
+                  />
+                </g>
+                <g
+                  id="rejilla-cuneta"
+                  fill="none"
+                  stroke="#c9d8cd"
+                  stroke-width="1.8"
+                >
+                  <path
+                    d="M1 1h57v6H1zM5 2l3 4m4-4 3 4m4-4 3 4m4-4 3 4m4-4 3 4m4-4 3 4m4-4 3 4m4-4 3 4"
+                  />
+                </g>
+              </defs>
+              <path d="M7 51h306v-8h158v159H7z" fill="url(#dots)" />
+              <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 51h306v-8h158" stroke="#aeb9a8" stroke-width="3" />
+                <path d="M352 43h103" stroke="#92ad7e" stroke-width="4" />
+                <path
+                  d="M7 58h306m1-8h157"
+                  stroke="#aeb9a8"
+                  stroke-width="1"
+                  opacity=".42"
+                />
+                <path
+                  d="M66 100v22h229m-147-22v22m82-22v22M295 134v13"
+                  stroke="#6b9d92"
+                  stroke-width="2.5"
+                />
+                <path
+                  d="M96 84h10v23h204v15h-5"
+                  stroke="#9dcab3"
+                  stroke-width="2"
+                  stroke-dasharray="5 3"
+                />
+                <path
+                  d="M38 86H22v87h63"
+                  stroke="#d2b988"
+                  stroke-width="2"
+                  stroke-dasharray="4 4"
+                />
+                <path d="M325 170h76V42" stroke="#88b6a1" stroke-width="2.5" />
+                <path d="M84 169v10h42v-10" stroke="#d2b988" stroke-width="2" />
+              </g>
+              <g class="vessel" data-scheme="A1" transform="translate(37 55)">
+                <rect width="59" height="45" rx="4" />
+                <rect class="water" x="4" y="40" width="51" height="0" rx="1" />
+                <use href="#rejilla-cuneta" y="-5" />
+                <text x="30" y="-13" text-anchor="middle">A1</text>
+              </g>
+              <g class="vessel" data-scheme="A2" transform="translate(119 55)">
+                <rect width="59" height="45" rx="4" />
+                <rect class="water" x="4" y="40" width="51" height="0" rx="1" />
+                <use href="#rejilla-cuneta" y="-5" />
+                <text x="30" y="-13" text-anchor="middle">A2</text>
+              </g>
+              <g class="vessel" data-scheme="A3" transform="translate(201 55)">
+                <rect width="59" height="45" rx="4" />
+                <rect class="water" x="4" y="40" width="51" height="0" rx="1" />
+                <use href="#rejilla-cuneta" y="-5" />
+                <text x="30" y="-13" text-anchor="middle">A3</text>
+              </g>
+              <rect
+                x="283"
+                y="119"
+                width="24"
+                height="15"
+                rx="2"
+                fill="url(#mesh)"
+                stroke="#9acaba"
+              />
+              <g
+                class="vessel"
+                data-scheme="DEPOSITO"
+                transform="translate(266 147)"
+              >
+                <rect width="59" height="45" rx="6" />
+                <rect class="water" x="4" y="40" width="51" height="0" rx="2" />
+              </g>
+              <g fill="#163b31" stroke="#9dcab3" stroke-width="1.6">
+                <circle cx="106" cy="99" r="5" />
+                <circle cx="390" cy="170" r="6" />
+              </g>
+              <g fill="#adb8a4">
+                <rect x="398" y="36" width="6" height="8" rx="1" />
+                <rect x="395" y="34" width="12" height="4" rx="1" />
+              </g>
+              <use href="#planta-parterre" transform="translate(368 41)" />
+              <use
+                href="#planta-parterre"
+                transform="translate(382 41) scale(.69)"
+              />
+              <use
+                href="#planta-parterre"
+                transform="translate(425 41) scale(.83)"
+              />
+              <use
+                href="#planta-parterre"
+                transform="translate(443 41) scale(.61)"
+              />
+              <g class="scheme-text">
+                <text x="467" y="19" text-anchor="end">
+                  Dispersor del parterre
+                </text>
+                <text x="107" y="84" text-anchor="middle">P1</text>
+                <text x="177" y="143" text-anchor="middle">Canaleta</text>
+                <text x="316" y="132">Filtro</text>
+                <text x="295" y="211" text-anchor="middle">Depósito</text>
+                <text x="105" y="202" text-anchor="middle">Emergencia</text>
+                <text x="391" y="192" text-anchor="middle">P2</text>
+              </g>
+            </svg>
+            <p class="scheme-note" id="scheme-note">
+              El relleno representa la altura útil cuando se dispone de
+              calibración.
+            </p>
+          </div>
+          <aside class="connection-panel" aria-labelledby="connection-title">
+            <div class="aside-head">
+              <span class="eyebrow">DISPOSITIVO</span
+              ><span class="signal-icon" aria-hidden="true">▂▄▆</span>
+            </div>
+            <h2 id="connection-title">Sin datos</h2>
+            <div id="connection-badge" class="badge neutral">◌ En espera</div>
+            <dl class="device-meta">
+              <div>
+                <dt>Última recepción</dt>
+                <dd id="received">—</dd>
+              </div>
+              <div>
+                <dt>Antigüedad del paquete</dt>
+                <dd id="age">—</dd>
+              </div>
+              <div>
+                <dt>Señal Wi-Fi</dt>
+                <dd id="rssi">—</dd>
+              </div>
+              <div>
+                <dt>Origen</dt>
+                <dd id="origin">SIMULACIÓN</dd>
+              </div>
+            </dl>
+          </aside>
+        </section>
+        <section class="section" aria-labelledby="levels-title">
+          <div class="section-heading">
+            <h2 id="levels-title">Niveles de agua</h2>
+            <span>Altura en centímetros</span>
+          </div>
+          <div id="stations" class="stations"></div>
+        </section>
+        <section class="section" aria-labelledby="equipment-title">
+          <div class="section-heading">
+            <h2 id="equipment-title">Mecanismos y depósito</h2>
+          </div>
+          <div class="equipment">
+            <article class="mech-box">
+              <h3>Salidas del controlador</h3>
+              <p class="box-note">
+                Órdenes eléctricas del ESP32, sin confirmación de movimiento.
+              </p>
+              <dl id="actuators" class="list"></dl>
+            </article>
+            <article class="mech-box">
+              <h3>Disponibilidad del depósito</h3>
+              <dl id="reservoir" class="list"></dl>
+            </article>
+          </div>
+        </section>
+        <section class="section" aria-labelledby="history-title">
+          <div class="section-heading">
+            <h2 id="history-title">Historial de niveles</h2>
+            <div class="actions">
+              <label class="sr-only" for="period">Periodo del historial</label
+              ><select id="period">
+                <option value="1">Última hora</option>
+                <option value="6">Últimas 6 horas</option>
+                <option value="24">Últimas 24 horas</option>
+                <option value="168">Últimos 7 días</option></select
+              ><a
+                class="secondary"
+                id="csv"
+                href="/api/v1/export.csv?mode=demo&amp;hours=1"
+                download
+                >↓ CSV</a
+              >
+            </div>
+          </div>
+          <div class="history-box">
+            <div
+              class="series"
+              id="series"
+              role="group"
+              aria-label="Series de la gráfica"
+            ></div>
+            <p id="history-empty" class="empty">
+              Esperando lecturas para el historial.
+            </p>
+            <svg
+              id="chart"
+              viewBox="0 0 900 185"
+              role="img"
+              aria-label="Evolución de la altura de agua, en centímetros"
+              hidden
+            ></svg>
+            <details id="history-details">
+              <summary>Consultar valores del historial</summary>
+              <div
+                class="table-scroll history-table"
+                tabindex="0"
+                aria-label="Lecturas históricas en centímetros"
+              >
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Recepción</th>
+                      <th>A1 (cm)</th>
+                      <th>A2 (cm)</th>
+                      <th>A3 (cm)</th>
+                      <th>Depósito (cm)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="history-rows"></tbody>
+                </table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <section class="section" aria-labelledby="events-title">
+          <div class="section-heading">
+            <h2 id="events-title">Registro de eventos</h2>
+            <div class="actions">
+              <button
+                class="secondary"
+                id="notify"
+                type="button"
+                aria-describedby="notify-info"
+              >
+                Activar notificaciones
+              </button>
+            </div>
+          </div>
+          <p id="notify-info" class="section-note">
+            Las notificaciones se muestran mientras este panel está abierto.
+          </p>
+          <p id="events-empty" class="empty">
+            Aún no se han registrado eventos.
+          </p>
+          <div id="events"></div>
+        </section>
+      </div>
+      <noscript
+        ><p>
+          Activa JavaScript para iniciar la sesión de monitoreo y consultar la
+          telemetría.
+        </p></noscript
+      >
+    </main>
+    <footer>
+      <div class="wrap">
+        <span data-brand>Pluvia</span><a href="/">Volver a la presentación ↗</a>
+      </div>
+    </footer>
+  </body>
+</html>

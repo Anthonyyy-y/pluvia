@@ -1,84 +1,77 @@
 # Pluvia
 
-Plataforma para presentar y supervisar un prototipo de drenaje pluvial en una cuadra ilustrativa de Circunvalación Sur. En superficie hay tres rejillas a ras de la cuneta y un parterre ornamental en la vereda, con un único dispersor. Las cámaras, el filtro, el depósito, las bombas y el compartimento seco de electrónica se encuentran bajo rasante. Incluye la web pública, una maqueta 3D editable, el catálogo de montaje, el monitor privado y una demostración pública con su propio historial.
+Pluvia es un prototipo de monitoreo y alerta temprana de acumulación de agua en desagües pluviales. La versión de dos desagües representa una cuadra ilustrativa de Circunvalación Sur, Machala. El desagüe A (D1) aloja una sonda y un motor con paletas. B (D2) incorpora el segundo sensor. A mitad del tubo que los comunica, una compuerta desvía agua hacia el filtro. El agua llega al nuevo estanque y una sola bomba la impulsa al dispersor del parterre.
 
-![La calle sobre rasante y el corte con las cámaras, el depósito y el riego bajo la vereda.](docs/maqueta-urbana.webp)
+![Corte del modelo de dos desagües con el tubo A–B, la derivación, el filtro, el estanque y el riego.](public/assets/corte.webp)
 
 ## Abrir en esta computadora
 
-Desde la carpeta `WEB`, ejecuta el servidor con Python 3.9 o posterior. Para la exposición local basta la biblioteca estándar de Python. El visor, su tipografía y los gráficos están incluidos en la entrega.
+Desde la carpeta `WEB`, ejecuta el servidor con Python 3.9 o posterior. Para la exposición local basta la biblioteca estándar. Three.js, la tipografía, los planos y las imágenes se sirven desde el proyecto.
 
 ```sh
-# Ejecuta desde la raíz del repositorio
 python3 -B server/app.py
 ```
 
-Abre la [presentación y maqueta 3D](http://127.0.0.1:8080/) o el [panel de demostración](http://127.0.0.1:8080/monitoreo). Mantén la terminal abierta mientras utilizas la plataforma. Pulsa Ctrl+C para detenerla. Si el puerto 8080 está ocupado, usa `PORT=8081 python3 -B server/app.py` y abre ese puerto en el navegador. Si mueves la carpeta a otro equipo, cambia el directorio del primer comando.
+Abre la [portada local](http://127.0.0.1:8080/). Mantén la terminal abierta durante la exposición y usa Ctrl+C para detenerla. Si el puerto está ocupado, ejecuta `PORT=8081 python3 -B server/app.py` y cambia el puerto en el navegador.
 
-La primera ejecución crea las bases SQLite en `data/`. La demostración arranca sin credenciales. Para habilitar el [monitor real](http://127.0.0.1:8080/monitoreo?modo=real), configura una contraseña privada en `MONITOR_PASSWORD` y reinicia el servidor. Después del inicio de sesión, mostrará **Esperando datos del dispositivo** hasta recibir el primer mensaje autenticado. El token privado del ESP32 se configura por separado en `DEVICE_TOKEN`.
+La primera ejecución crea las bases SQLite en `data/`. La demostración del monitor funciona sin credenciales. Para consultar lecturas enviadas al servidor, configura `MONITOR_PASSWORD` y `DEVICE_TOKEN` en el entorno privado y reinicia el servicio. El operador usa la contraseña en la pestaña **Nube**. La placa utiliza el token y el `DEVICE_ID` correspondiente al receptor. [Configuración de despliegue](docs/DESPLIEGUE.md)
 
-## Recorrido para la exposición
+## Páginas de la exposición
 
-1. Gira la cuadra desde la portada. Busca las tres rejillas junto al bordillo. El dispersor está en el parterre frente a A2. Pulsa **Ver subsuelo** para retirar la cubierta de la calle y **Ver superficie** para reponerla. En el explorador puedes seleccionar cada rejilla, abrir el **Corte del subsuelo** y separar los módulos con la vista explotada.
-2. Activa **Recorrido del agua** para seguir el colector y la derivación bombeada de A1 hacia el filtro. Desde el depósito, P2 conduce el agua por una tubería enterrada hasta el dispersor. La compuerta de A1 tiene una salida de emergencia independiente. El recorrido guiado abre el corte al visitar un equipo enterrado y vuelve a la vereda para mostrar el riego.
-3. En el panel público, elige un escenario de nivel alto en A2. Reconoce el incidente y selecciona recuperación para ver el cierre. Prueba también una pérdida de conexión. Con la configuración inicial, los datos caducan después de 10 s y el dispositivo se marca desconectado a los 30 s.
-4. Selecciona **Depósito sin sensor**. Aparecen el estado del sensor, ambos bloqueos y la falta de valores disponibles. Los escenarios que sí tienen medida utilizan un depósito virtual.
-5. Cambia el intervalo del historial y descarga el CSV. La aplicación utiliza los mismos componentes de supervisión en ambos modos. Las mediciones e incidentes se conservan en bases independientes.
+| Página local | Qué encontrarás |
+| --- | --- |
+| [Inicio](http://127.0.0.1:8080/) | Marca, descripción y modelo interactivo de la cuadra. |
+| [Sobre el proyecto](http://127.0.0.1:8080/proyecto/) | Origen, problema y propósito del monitoreo. |
+| [Nuestro producto](http://127.0.0.1:8080/producto/) | Explorador 3D de dos desagües, fichas y catálogo de montaje. |
+| [¿Cómo funciona?](http://127.0.0.1:8080/funcionamiento/) | Del tubo A–B al riego, con el recorrido de agua y las señales de control. |
+| [Simulación](http://127.0.0.1:8080/simulacion/) | Circuito de Wokwi, componentes y archivos para reproducirlo. |
+| [Monitoreo](http://127.0.0.1:8080/monitoreo/) | Demostración, USB, Wi-Fi local y nube con historial según la fuente. |
+| [Proceso de desarrollo](http://127.0.0.1:8080/proceso/) | Etapas, evidencias disponibles y fotografías pendientes. |
+| [Desarrollo tecnológico](http://127.0.0.1:8080/tecnologia/) | PSeInt, Java, electrónica, descargas y repositorio. |
+| [Resultados y aplicaciones](http://127.0.0.1:8080/resultados/) | Pruebas de software, diagnóstico físico, limitaciones y mejoras. |
+| [Nuestro equipo](http://127.0.0.1:8080/equipo/) | Los ocho integrantes y los datos aportados para sus fichas. |
+| [Contacto](http://127.0.0.1:8080/contacto/) | Canales del proyecto, QR y formulario de demostración. |
 
-En el visor puedes usar el ratón, arrastrar horizontalmente en una pantalla táctil o enfocar el lienzo con Tab y usar las flechas. Acerca y aleja con los botones o con + y −. La tecla Inicio restablece la cámara. El catálogo y las explicaciones también se pueden recorrer sin WebGL.
+En **Nuestro producto**, alterna **Superior (tuberías)**, **Frontal** y **Superior cubierta**. Selecciona una pieza con el ratón, un punto interactivo o el menú de componentes. La ficha muestra ubicación, función y especificación. El recorrido guiado, la vista explotada y el flujo de agua permiten revisar la topología de la instalación. Con el lienzo enfocado se puede girar mediante las flechas, acercar y alejar con + y − y restablecer la cámara con Inicio. La alternativa sin WebGL conserva los planos y el catálogo. La escala vertical del modelo es ilustrativa. [Guía de cuatro vistas](public/assets/guia-urbana.pdf)
 
 ## Del ESP32 al navegador
 
-```text
-Sensores     →  ciclo local del ESP32  →  LCD, LED, buzzer y órdenes de las salidas
-                        ↓ copia de la última captura
-                tarea Wi-Fi independiente
-                        ↓ POST /api/v1/telemetry
-             API autenticada → SQLite → SSE → panel autenticado
-```
+El sketch vigente es [PluviaDos.ino](firmware/PluviaDos/PluviaDos.ino), para ESP32 WROOM clásico. Usa JSN-SR04T en A y HC-SR04 en B, una LCD paralela, tres LED y una LDR. Tras cada arranque, vacía el estanque y confirma el punto de partida manteniendo BOOT un segundo o enviando V por USB. Luego estima los segundos de riego disponibles con el tiempo de desvío y el de bombeo. Por eso `nivelEstanque` se publica como `null`; `reservaEstimadaS` informa el cálculo disponible. Las distancias nominales de montaje y los tiempos se ajustan en [Ajustes.h](firmware/PluviaDos/Ajustes.h).
 
-La placa inicia la conexión hacia la computadora o el alojamiento. El servidor añade la hora de recepción y conserva el identificador de arranque y la secuencia. El panel muestra el estado clasificado por el firmware. Un cambio de ángulo representa una orden al servo y una salida activa representa un mando eléctrico. La interfaz permite supervisar y reconocer incidentes.
-
-| Para hacer esto | Consulta |
+| Fuente del panel | Recorrido de los datos |
 | --- | --- |
-| Configurar una exposición LAN, obtener la IP de la computadora y acceder desde el teléfono | [Exposición local y publicación HTTPS](docs/DESPLIEGUE.md) |
-| Copiar credenciales, configurar la CA, compilar y conectar la placa | [Guía de integración ESP32](firmware/README.md) |
-| Entender los campos, límites, rutas, autenticación y separación de sesiones | [Contrato y API](server/GUIA.md) y [ejemplo JSON](server/telemetria.ejemplo.json) |
-| Enviar muestras por HTTP sin hardware | [Simulador CLI](server/simulator.py) y [guía de uso](server/GUIA.md) |
-| Configurar el servidor sin publicar secretos | [Plantilla de configuración](.env.example) |
-| Atender solicitudes de demostración y respaldar las bases | [Operación y copias](docs/DESPLIEGUE.md#datos-contactos-y-copias) |
+| Demostración | Genera escenarios ilustrativos en el navegador. Permite probar niveles altos en D1 o D2, un fallo de sensor, riego o interrupción de lecturas. |
+| USB | Web Serial lee dos líneas JSON por ciclo a 115200 baudios. El usuario selecciona el puerto y cierra el monitor serie de Arduino antes de conectar. |
+| Wi-Fi local | El navegador consulta `GET /api/v1/lecturas` en la IP de la placa. La dirección se anuncia por USB. |
+| Nube | La placa envía un paquete v2 por HTTPS a `POST /api/v1/telemetry`. La API valida el token, el dispositivo y las dos lecturas, y deduplica por arranque y secuencia. El panel autenticado consulta el último estado y el histórico. |
 
-El formulario registra la solicitud en SQLite y devuelve una referencia después de guardarla. El responsable consulta esos registros desde el servidor. Las notificaciones del panel requieren permiso del navegador y una página abierta.
+`ts` es el tiempo de adquisición del sensor desde el arranque. La nube asigna su propia fecha de recepción. Una lectura `null` indica falta de medición válida. El estado de bomba, motor o compuerta informa la orden del controlador. El panel permite exportar el historial a CSV. La caducidad y la desconexión describen la antigüedad del enlace. [Configuración de USB, red y carga de la placa](firmware/PluviaDos/LEEME.txt) · [Contrato y API](server/GUIA.md)
+
+Para Vercel, el almacenamiento persistente es PostgreSQL. Para `server/app.py` o un servidor WSGI, es SQLite. En ambos casos el formulario de contacto genera una referencia al guardar la solicitud. El servidor local conserva además la API SSE y el simulador CLI del contrato anterior para instalaciones compatibles. [Operación y copias](docs/DESPLIEGUE.md#datos-contactos-y-copias)
 
 ## Editar el producto
 
 | Recurso | Archivo |
 | --- | --- |
-| Nombre mostrado en la web y en el panel | [Configuración de identidad](public/config.js) |
-| Presentación, navegación y estilos | [Página pública](public/index.html), [estilos](public/styles.css) y [comportamiento](public/app.js) |
-| Geometría procedural, agrupación de piezas y rutas del agua | [Maqueta editable](public/model/assembly.js) |
-| Cámara, selección, iluminación y movimiento reducido | [Visor Three.js](public/model/viewer.js) |
-| Ubicaciones, funciones y estados de las piezas | [Catálogo editable](public/catalog.js) |
-| Láminas esquemáticas de los materiales | [Ilustraciones editables](public/material-art.js) |
-| Planos de la cuadra | [Planta urbana editable](public/assets/urbano-planta.svg), [corte y recorrido del agua](public/assets/urbano-corte.svg) y [guía urbana en PDF](public/assets/guia-urbana.pdf) |
-| Panel y su conexión con el servidor | [Interfaz de monitoreo](public/monitoreo/index.html) y [cliente SSE](public/panel.js) |
+| Textos, integrantes, enlaces, catálogo, fichas y referencias a evidencias | [Contenido editable](public/content.js) |
+| Nombre mostrado, navegación y presentación de las once páginas | [Identidad](public/config.js), [navegación](public/site-nav.js), [páginas](public/editorial.js) y [estilos](public/pages.css) |
+| Geometría agrupada, iluminación, cámara, selección y gestos | [Modelo](public/model/assembly.js) y [visor](public/model/viewer.js) |
+| Explorador, catálogos y láminas de identificación | [Interacciones](public/app.js), [catálogo](public/catalog.js) e [ilustraciones](public/material-art.js) |
+| Planos | [Superior cubierta](public/assets/urbano-planta.svg), [tuberías](public/assets/superior-tuberias.svg), [frontal](public/assets/frontal.svg) y [recorrido](public/assets/urbano-corte.svg) |
+| Interfaz y validación de las fuentes del monitor | [Monitor](public/monitoreo/index.html), [cliente](public/panel.js) y [lecturas](public/monitor-datos.js) |
+| Acceso, persistencia y despliegue | [Plantilla de entorno](.env.example), [servidor local](server/app.py), [función Vercel](api/endpoint.py) y [guía de publicación](docs/DESPLIEGUE.md) |
 
-La base parte de la propuesta de 80 × 60 cm. Las rejillas se alinean en el lado de la calzada que limita con el bordillo. El parterre ocupa una parte de la vereda, a la altura de A2. La LCD y el ESP32 se consultan en el compartimento seco de servicio. La cuadra y la posición de sus desagües son un escenario de exposición. Las proporciones verticales, los acabados y el nivel de agua del visor son ilustrativos. El modelo agrupa piezas pequeñas por módulo para facilitar su selección. Las láminas de los materiales identifican cada pieza individual. Las imágenes WebP de la presentación proceden de la misma geometría del visor. La marca de respaldo del HTML y de las imágenes prerenderizadas es Pluvia.
+Los renders WebP proceden de la misma geometría que el explorador. Las fotografías reales del montaje y la validez de las mediciones físicas se documentan en las páginas de proceso y resultados. Las dependencias visuales incluidas tienen sus propias licencias. [Three.js](public/vendor/three/LICENSE) · [Inter](public/vendor/inter/LICENSE)
 
-El 3D usa Three.js 0.180.0 y la tipografía pública es Inter. Los archivos se sirven localmente con sus respectivas licencias. [Licencia de Three.js](public/vendor/three/LICENSE) · [Licencia de Inter](public/vendor/inter/LICENSE)
+## Verificación y alcance
 
-## Verificación
-
-Desde la carpeta `WEB`:
+Desde la carpeta `WEB`, ejecuta la suite del servidor. Utiliza bases temporales y comprueba recepción, autenticación, mensajes inválidos, reintentos, historial y separación de fuentes.
 
 ```sh
 python3 -B -m unittest discover -s tests -v
-python3 -B firmware/probar.py
 ```
 
-La suite HTTP utiliza servidores y bases temporales. La regresión de firmware necesita un compilador C++17 y los sustitutos de hardware del proyecto en `firmware/tests`. Esa carpeta se usa para repetir los ensayos del proyecto anterior. La web y el sketch adaptado se ejecutan independientemente.
-
-Las pruebas de navegador son opcionales para desarrollo. Con Node.js compatible con Playwright:
+Para las pruebas de navegador instala las dependencias de desarrollo y Chromium. La prueba abre un puerto temporal y utiliza credenciales de ensayo.
 
 ```sh
 npm install
@@ -86,19 +79,6 @@ npx playwright install chromium
 npm run probar:web
 ```
 
-La prueba abre un puerto local temporal, genera sus propias credenciales de ensayo y descarta sus datos al terminar. Recorre la portada, el modelo, el catálogo, el contacto, la alternativa sin WebGL y los estados del panel.
+Para el montaje físico quedan por comprobar la alimentación estable, las lecturas de ambos sensores con una regla, el caudal del filtro y la bomba y una recepción real del perfil v2. El diagnóstico previo del 23 de noviembre registró reinicios por baja tensión. Después de retirar la placa del protoboard se observó un LED estable. El monitor de producción seguía esperando la primera lectura. El montaje de dos desagües del 24 de noviembre fija 10 cm de altura útil de referencia y requiere calibración en cada recipiente.
 
-## Estado de la entrega
-
-| Estado | Alcance |
-| --- | --- |
-| Implementado | Presentación, visor WebGL, selección y resaltado, corte del subsuelo, despiece, animación del recorrido hasta el dispersor, recorrido guiado, 34 fichas de inventario y registro de solicitudes. |
-| Implementado | Recepción HTTP autenticada, validación de mensajes, deduplicación, SQLite, SSE, historial, eventos, reconocimientos, CSV y modo real protegido. |
-| Demostración | Diez escenarios con un dispositivo virtual por sesión. La CLI atraviesa el endpoint de ingestión. La vista previa comercial lleva la etiqueta de simulación. |
-| Verificado en software | Recepción de paquetes válidos, rechazo de inválidos, persistencia tras reinicio, separación de orígenes, datos caducados, desconexión, recuperación y bloqueo de las dos bombas. |
-| Verificado en navegador | Chromium a 320, 390, 768 y 1440 px. Se probaron las vistas, los puntos 3D, la selección desde el catálogo, las capas, el recorrido, el plano sin WebGL, el envío del formulario y el panel por SSE. |
-| Verificado en firmware | Compilación del sketch para ESP32 WROOM con el núcleo 3.3.12, cuatro perfiles de regresión y dieciséis mensajes del serializador aceptados por el validador. |
-| Pendiente en banco | Instalar y calibrar los sensores, confirmar el sensor del depósito y comprobar físicamente Wi-Fi, LCD, actuadores, alimentación, caídas de agua y recorridos. |
-| Pendiente en alojamiento | Configurar un dominio y un certificado definitivos y probar la comunicación con la placa contra ese despliegue. |
-
-El firmware adaptado conserva la clasificación, la calibración configurada y las protecciones locales del proyecto. Los valores iniciales de geometría son provisionales. La placa solo publica porcentajes cuando la calibración del punto está marcada como confirmada. El perfil de montaje conserva el depósito sin sensor y bloquea la evacuación y el riego en esa condición.
+La carpeta `firmware/MonitoreoAgua`, su [prueba de regresión](firmware/probar.py), el [simulador HTTP por CLI](server/simulator.py) y el [ejemplo de paquete v1](server/telemetria.ejemplo.json) conservan el perfil anterior de tres estaciones. El receptor admite ese histórico y el panel lo identifica como perfil anterior. Para cargar la versión actual utiliza [PluviaDos](firmware/PluviaDos/LEEME.txt).

@@ -60,6 +60,18 @@ Cada punto contiene todos los campos siguientes.
 
 Los motivos admitidos son `SIN_SENSOR`, `SIN_ECO`, `OBJETO_DEMASIADO_CERCA`, `FUERA_RANGO_SENSOR`, `DISTANCIA_MAYOR_QUE_ALTURA`, `REVISAR_ALTURA_Y_LIMITES` y `CADUCADA`. Se aceptan las siete etapas del firmware, desde `REPOSO` hasta `ERROR_SENSOR`, enumeradas en el validador. El servidor conserva el estado recibido. Con un fallo, altura y porcentaje deben ser `null`. El depósito ausente requiere `installed:false`, `valid:false`, `state:"ERROR"`, `reason:"SIN_SENSOR"`, medidas y antigüedad nulas y ambas bombas inhibidas.
 
+La geometría viaja en cada muestra: el panel no fija una altura de desagüe.
+Con `empty_cm - full_cm = 10`, 5 cm de agua representan el 50 % y 10 cm el
+100 %. El validador comprueba que altura, distancia y porcentaje concuerden,
+con tolerancia para el redondeo del firmware. Una altura que sobrepasa la útil
+puede conservar su medida en centímetros y presentar un porcentaje limitado
+al 100 %. Una distancia ligeramente mayor que el fondo puede producir altura
+cero. `full_cm = 0` es una referencia lógica admisible; no significa que el
+sensor pueda medir a distancia cero. Si el firmware informa una zona ciega,
+el panel recibe `ERROR` y valores no disponibles en vez de inventar el 100 %.
+La demostración usa desagües virtuales de 10 cm con sensores elevados; esas
+distancias ilustrativas no reemplazan la calibración física del montaje.
+
 Para una muestra nueva la respuesta es HTTP 201. Un reintento idéntico con igual dispositivo, arranque y secuencia recibe HTTP 200 y `duplicate:true`; conserva la primera fecha. Una colisión, un paquete atrasado o una muestra inédita de un arranque ya sustituido recibe 409. Se rechazan JSON mal formado, claves repetidas y números no finitos con 400, identidad no autorizada con 401/403 y campos incoherentes con 422. Los errores incluyen `{"error":"descripción"}`.
 
 ## Lectura, eventos y sesiones
@@ -120,3 +132,7 @@ python3 -B -m unittest discover -s tests -v
 ```
 
 Las pruebas arrancan un servidor HTTP de bucle local en puertos efímeros con dos bases temporales. Cubren la CLI de simulación por medio de su cliente HTTP, autenticación, aislamiento entre navegadores y fuentes, aceptación y rechazo de mensajes, reintentos, arranques, SSE, escenarios, campos nulos, registro y reconocimiento de incidentes, caducidad, recuperación, persistencia después de reiniciar, CSV y recepción de solicitudes. La comprobación con la placa, el certificado del dominio definitivo, su Wi-Fi y los sensores físicos se realiza durante la puesta en servicio.
+
+## Dos desagües y telemetría v2
+
+El mismo POST autenticado `/api/v1/telemetry` acepta v1 y v2. El firmware PluviaDos envía un sobre con `version=2`, `device_id`, `source`, `boot_id`, `seq`, `uptime_ms` y `lecturas` con D1 y D2 del mismo ciclo. Cada lectura contiene `ts` monotónico en ms, altura `valor` en cm, orden `bombaEstado`, `nivelEstanque` sin lectura (null), reserva estimada `reservaEstimadaS` en segundos, órdenes `motorEstado` y `compuertaAbierta`, estado de iluminación `luz` y `source`. Las lecturas inválidas y la reserva sin confirmar se expresan con null. Las rutas de histórico y CSV conservan datos anteriores y etiquetan sus sensores originales. El firmware sirve el mismo sobre por HTTP de sólo lectura en `/api/v1/lecturas` en la red local. El monitor estático puede leer este endpoint o Web Serial sin un backend.

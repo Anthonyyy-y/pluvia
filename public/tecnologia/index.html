@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#132c29"><meta property="og:title" content="Desarrollo tecnológico y código · Pluvia">
+<meta name="description" content="Consulta el algoritmo, la implementación en Java y el programa del ESP32 que adquiere las lecturas y controla la maqueta.">
+<title>Desarrollo tecnológico y código · Pluvia</title>
+<link rel="icon" href="/brand.svg"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/pages.css">
+<link rel="stylesheet" href="/model/viewer.css">
+<script src="/config.js"></script><script src="/content.js"></script>
+<script defer src="/site-nav.js"></script><script type="module" src="/app.js"></script>
+</head><body data-page="tecnologia"><a class="skip" href="#principal">Saltar al contenido</a><header id="site-header"><noscript><nav class="nojs-links" aria-label="Secciones"><a href="/">Inicio</a> <a href="/proyecto/">Sobre nosotros y el proyecto</a> <a href="/producto/">Nuestro producto</a> <a href="/funcionamiento/">¿Cómo funciona?</a> <a href="/simulacion/">Simulación del proyecto</a> <a href="/monitoreo/">Monitoreo y datos en tiempo real</a> <a href="/proceso/">Proceso de desarrollo</a> <a href="/tecnologia/">Desarrollo tecnológico y código</a> <a href="/resultados/">Resultados y aplicaciones</a> <a href="/equipo/">Nuestro equipo</a> <a href="/contacto/">Contacto</a></nav></noscript></header>
+<main id="principal"><section class="page-opening wrap"><p class="kicker"><span class="dash"></span>Desarrollo tecnológico y código</p><h1>Del sensor al navegador.</h1><p class="page-intro">Consulta el algoritmo, la implementación en Java y el programa del ESP32 que adquiere las lecturas y controla la maqueta.</p></section><div class="wrap facts-grid"><article class="fact"><h3>PSeInt</h3><p>El algoritmo didáctico del avance trabaja con un punto de monitoreo y valida las entradas antes de clasificar el nivel.</p><a class="text-link field-link" href="/descargas/MonitoreoPluvia.psc">Descargar pseudocódigo <span aria-hidden="true">↗</span></a></article><article class="fact"><h3>Java</h3><p>La versión final procesa D1 y D2, valida entradas y prueba las reglas del controlador en consola.</p><a class="text-link field-link" href="/descargas/MonitoreoPluvia.java">Descargar código Java <span aria-hidden="true">↗</span></a></article><article class="fact"><h3>ESP32</h3><p>El sketch de dos desagües integra sensores, compuerta, motor, riego y comunicaciones. Incluye las cabeceras de configuración.</p><a class="text-link field-link" href="/descargas/PluviaDos.zip">Descargar sketch de Arduino <span aria-hidden="true">↗</span></a></article></div><section id="tecnica" class="section wrap tech">
+        <div>
+          <p class="kicker"><span class="dash"></span> Información técnica</p>
+          <h2>La arquitectura.</h2>
+          <a
+            class="text-link"
+            href="/assets/guia-urbana.pdf"
+            target="_blank"
+            rel="noopener"
+            ><i data-icon="book"></i>Guía de la maqueta urbana (PDF)</a
+          >
+        </div>
+        <div class="tech-list">
+          <details open>
+            <summary>Arquitectura de comunicación</summary>
+            <p>
+              El ESP32 toma las lecturas y envía paquetes autenticados por Wi-Fi
+              a la API HTTPS de Pluvia. El almacenamiento local utiliza SQLite y la publicación en Vercel utiliza PostgreSQL. También puedes consultar la placa desde el navegador por USB o por HTTP en la red local.
+            </p>
+          </details>
+          <details>
+            <summary>Alcance del prototipo</summary>
+            <p>
+              D1 incorpora mecanismos de intervención. D2 supervisa el nivel. Una altura elevada justifica inspeccionar el punto y puede
+              tener distintas causas. La plataforma registra las salidas
+              ordenadas por el controlador.
+            </p>
+          </details>
+          <details>
+            <summary>Calibración y protecciones</summary>
+            <p>
+              La altura útil ocupada requiere calibrar cada recipiente. El estanque carece de sensor. La reserva se estima en segundos de riego y requiere confirmar el vacío tras el arranque. La LCD, las señales y las
+              protecciones funcionan localmente.
+            </p>
+          </details>
+          <details>
+            <summary>Planos de la cuadra</summary>
+            <div class="plan-links">
+              <a href="/assets/urbano-planta.svg" target="_blank" rel="noopener"
+                >Planta de la calle</a
+              ><a href="/assets/urbano-corte.svg" target="_blank" rel="noopener"
+                >Corte y recorrido del agua</a
+              >
+            </div>
+          </details>
+          <details>
+            <summary>Próxima validación física</summary>
+            <p>
+              Queda por medir la geometría final, contrastar la reserva del estanque y comprobar las lecturas, las cargas y el enlace Wi-Fi
+              con el ESP32 montado. La realimentación de movimiento y las
+              notificaciones en segundo plano son posibles ampliaciones.
+            </p>
+          </details>
+        </div>
+      </section><div class="wrap resource-foot"><a class="text-link field-link" href="https://github.com/Anthonyyy-y/pluvia">Ver el repositorio del equipo <span aria-hidden="true">↗</span></a></div></main>
+<footer id="site-footer"></footer><noscript>Activa JavaScript para usar la maqueta interactiva de Pluvia.</noscript></body></html>

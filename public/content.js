@@ -95,13 +95,13 @@ window.PLUVIA_CONTENT = {
   },
   {
     "name": "Kleiner Toro",
-    "role": "Simulación electrónica y pruebas del controlador",
+    "role": "Diseño de la maqueta y catálogo de materiales",
     "photo": "/assets/equipo/kleiner.webp",
     "github": "Kleiner1070"
   },
   {
     "name": "Jalil Cuenca",
-    "role": "Diseño de la maqueta y catálogo de materiales",
+    "role": "Simulación electrónica y pruebas del controlador",
     "photo": "/assets/equipo/jalil.webp",
     "github": "JFCL2008"
   }

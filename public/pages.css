@@ -52,3 +52,4 @@ body[data-page] #principal{min-height:70vh}
 .loading-model{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:20px;color:#eaf7e7;background:#16362ce8;opacity:1;z-index:2}
 .loading-model::before{content:"";width:11px;height:11px;border:2px solid #b4c6b7;border-top-color:#578246;border-radius:100%;animation:pl-spin .8s linear infinite}
 @keyframes pl-spin{to{transform:rotate(360deg)}}
+.digital-views{display:grid;gap:22px}.digital-views img{max-height:35vh}.member .portrait{background:#fff;object-fit:contain;object-position:center;border:1px solid #dce4db}.role-note{color:#52695d;font-size:.88rem;margin-block:12px 0}

@@ -106,6 +106,23 @@ window.PLUVIA_CONTENT = {
     "github": "JFCL2008"
   }
 ],
+  "teachers": [
+    {
+        "name": "Ing. Carlos Vargas",
+        "course": "Técnicas de Programación",
+        "photo": "/assets/docentes/carlos-vargas.jpeg"
+    },
+    {
+        "name": "Ing. Richard Sucuy",
+        "course": "Lógica Matemática",
+        "photo": "/assets/docentes/richard-sucuy.jpeg"
+    },
+    {
+        "name": "Mgtr. Elmer Gallardo",
+        "course": "Lenguaje y Comunicación",
+        "photo": "/assets/docentes/elmer-gallardo.jpeg"
+    }
+],
   "media": {
   "components": "",
   "assembly": "/assets/evidencias/montaje-electronico.webp",
@@ -678,7 +695,17 @@ Object.assign(window.PLUVIA_CONTENT, {
     resultados: () => title('resultados')+grid(item('Control de la maqueta','Las pruebas del controlador verifican las órdenes de la compuerta, el motor y el riego con entradas de ensayo.'),item('Software Java','La suite del avance final registra 15 comprobaciones de control y cuatro escenarios de consola. Son resultados de pruebas de software.'),item('Prueba física','El 23 de noviembre se observaron reinicios de la placa por baja tensión. La comprobación de ese día encontró el monitor real a la espera de su primera muestra.'))+
       story('Contrastar con el agua.',c.results.measurement?escape(c.results.measurement)+' '+escape(c.results.method)+' '+escape(c.results.date):'TEMPORAL – reemplazar · Faltan las series de nivel contrastadas con regla, la fecha, el montaje utilizado y las mediciones de caudal.',evidence('observations','Registro de resultados físicos')) +
       grid(item('Aplicaciones','Supervisión de puntos críticos de drenaje, orientación de inspecciones y riego demostrativo de áreas verdes.'),item('Limitaciones','Una altura elevada puede tener varias causas. La reserva se estima por tiempo de riego. Falta medir cuánta agua entra y sale en la instalación.'),item('Mejoras previstas','Incorporar realimentación del movimiento, medir directamente el estanque y evaluar notificaciones en segundo plano.')),
-    equipo: () => title('equipo') + '<p class="wrap role-note">Distribución de responsabilidades propuesta para la presentación del proyecto.</p>' + '<section class="wrap team-grid">'+c.team.map(m=>`<article class="member">${m.photo?'<img class="portrait" alt="'+escape(m.name)+'" src="'+escape(m.photo)+'">':'<div class="portrait missing"><span class="initials" aria-hidden="true">'+escape(m.name.split(' ').map(w=>w[0]).join(''))+'</span><small>TEMPORAL – reemplazar</small></div>'}<h2>${escape(m.name)}</h2><p>${escape(m.role||'TEMPORAL – reemplazar · Función en el proyecto')}</p>${m.github?'<small>GitHub · '+escape(m.github)+'</small>':''}</article>`).join('')+'</section>',
+    equipo: () => title('equipo') + '<p class="wrap role-note">Distribución de responsabilidades propuesta para la presentación del proyecto.</p>' + '<section class="wrap team-grid">'+c.team.map(m=>`<article class="member">${m.photo?'<img class="portrait" alt="'+escape(m.name)+'" src="'+escape(m.photo)+'">':'<div class="portrait missing"><span class="initials" aria-hidden="true">'+escape(m.name.split(' ').map(w=>w[0]).join(''))+'</span><small>TEMPORAL – reemplazar</small></div>'}<h2>${escape(m.name)}</h2><p>${escape(m.role||'TEMPORAL – reemplazar · Función en el proyecto')}</p>${m.github?'<small>GitHub · '+escape(m.github)+'</small>':''}</article>`).join('')+'</section>'
+      + '<section class="wrap faculty" aria-labelledby="faculty-heading">'
+      + '<h2 id="faculty-heading">Docentes Responsables</h2>'
+      + '<div class="faculty-grid">'
+      + c.teachers.map(teacher => `
+          <article class="faculty-card">
+            <img class="portrait" src="${escape(teacher.photo)}" alt="${escape(teacher.name)}" loading="lazy">
+            <h3>${escape(teacher.name)}</h3>
+            <p>${escape(teacher.course)}</p>
+          </article>`).join('')
+      + '</div></section>',
     contacto: () => title('contacto')+s.contact.replace('<h2>Conoce el prototipo.</h2>','<h2>Solicita una demostración.</h2>')+s.dialog+
       '<section class="wrap contact-directory"><div><h2>Pluvia.</h2><p>Correo de contacto</p>'+ (c.contactEmail?link('mailto:'+c.contactEmail,c.contactEmail):'<span>Utiliza el formulario para contactar con Pluvia.</span>')+'<p>Enlaces del proyecto</p>'+[link(links.github,'Repositorio del equipo'),link(links.wokwi,'Simulación electrónica'),link('/solicitudes/','Bandeja privada del equipo'),...c.socialLinks.map(x=>link(x.url,x.label))].join(' ')+'</div>'+shot('/descargas/qr-pluvia.png','Escanea el QR para abrir el sitio público.','qr-figure')+'</section>'
   };

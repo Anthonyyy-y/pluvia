@@ -42,6 +42,8 @@ class Store:
             db.executescript(SCHEMA)
             if source == "REAL":
                 db.execute("CREATE TABLE IF NOT EXISTS contact_requests(id TEXT PRIMARY KEY, received REAL, name TEXT, email TEXT, message TEXT)")
+                from contacts import initialize
+                initialize(db)
 
     @contextmanager
     def db(self, write=False):
@@ -260,5 +262,5 @@ class Store:
 
     def contact(self, ref, data):
         with self.db(True) as db:
-            db.execute("INSERT INTO contact_requests VALUES(?,?,?,?,?)",
+            db.execute("INSERT INTO contact_requests(id,received,name,email,message) VALUES(?,?,?,?,?)",
                        (ref,time.time(),data["name"],data["email"],data["message"]))

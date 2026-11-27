@@ -181,6 +181,13 @@ def route(app, env):
             with app.lock:
                 app.logins.pop(digest(cookies.get("pluvia_monitor","")),None)
             return reply(200,{"authenticated":False},[cookie("pluvia_monitor","",app.secure,0)])
+        request_action = re.fullmatch(r"contacts/([a-f0-9]{16})/read", action)
+        if request_action:
+            app.authorize("real", cookies)
+            keys(data, "", "solicitud")
+            from contacts import read
+            read(app.stores["real"], request_action.group(1))
+            return reply(200, {"accepted": True})
         if action == "contact":
             keys(data,"name email message","solicitud")
             if not all(type(v) is str for v in data.values()):
@@ -200,6 +207,11 @@ def route(app, env):
             app.stores[mode].acknowledge(scope,int(match.group(1)))
             return reply(200,{"acknowledged":True})
     elif method == "GET":
+        if action == "contacts":
+            app.authorize("real", cookies)
+            from contacts import listing
+            result = listing(app.stores["real"], args.get("before", [None])[0])
+            return reply(200, result)
         if action not in ("snapshot","stream","history","events","export.csv"):
             raise Problem(404,"Ruta de API desconocida.")
         scope = app.authorize(mode,cookies)

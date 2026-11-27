@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Solicitudes · Pluvia</title>
+<link rel="icon" href="/brand.svg"><link rel="stylesheet" href="/panel.css">
+<link rel="stylesheet" href="/pages.css"><link rel="stylesheet" href="/solicitudes/inbox.css">
+<script defer src="/content.js"></script><script defer src="/site-nav.js"></script>
+<script defer src="/solicitudes/inbox.js"></script>
+</head><body class="monitor-page"><a href="#principal" class="skip">Saltar al contenido</a>
+<header id="site-header"></header>
+<main id="principal" class="monitor-main">
+<p class="overline">Administración de Pluvia</p><h1>Solicitudes de demostración</h1>
+<p>Consulta los mensajes recibidos a través del formulario del proyecto.</p>
+<form id="inbox-login" class="monitor-sheet"><label for="inbox-password">Contraseña del monitor</label>
+<input id="inbox-password" type="password" required autocomplete="current-password" maxlength="512">
+<button class="action-btn" type="submit">Ingresar</button></form>
+<p id="inbox-status" role="status" aria-live="polite"></p>
+<section id="inbox" hidden>
+<div class="inbox-tools"><p id="inbox-count"></p><button id="inbox-refresh" class="outline-btn">Actualizar</button><button id="inbox-logout" class="outline-btn">Cerrar sesión</button></div>
+<div id="inbox-list"></div><button id="inbox-more" class="outline-btn" hidden>Cargar anteriores</button>
+</section></main><footer id="site-footer"></footer>
+</body></html>

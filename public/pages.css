@@ -53,3 +53,4 @@ body[data-page] #principal{min-height:70vh}
 .loading-model::before{content:"";width:11px;height:11px;border:2px solid #b4c6b7;border-top-color:#578246;border-radius:100%;animation:pl-spin .8s linear infinite}
 @keyframes pl-spin{to{transform:rotate(360deg)}}
 .digital-views{display:grid;gap:22px}.digital-views img{max-height:35vh}.member .portrait{background:#fff;object-fit:contain;object-position:center;border:1px solid #dce4db}.role-note{color:#52695d;font-size:.88rem;margin-block:12px 0}
+.construction-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:25px;padding-block:30px 45px}.construction-gallery img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#e6ece3}.evidence-grid .photo-pending img{width:100%}.evidence-grid .project-figure img{width:100%;aspect-ratio:4/3;object-fit:cover}@media(max-width:650px){.construction-gallery{grid-template-columns:1fr}}

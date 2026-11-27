@@ -331,5 +331,45 @@ class API(unittest.TestCase):
             self.assertEqual(("Exposición",),db.execute("SELECT name FROM contact_requests WHERE id=?",(answer["id"],)).fetchone())
 
 
+    def test_bandeja_privada_persistencia_y_lectura(self):
+        self.api("contacts", expect=401)
+        ref = self.api("contact", {"name":"Visitante", "email":"visitante@example.org",
+                                 "message":"Deseo conocer la maqueta."}, expect=201)["id"]
+        self.api("contacts/"+ref+"/read", {}, expect=401)
+        self.api("contacts", expect=401, token=self.env["DEVICE_TOKEN"])
+        self.api("login", {"password":self.env["MONITOR_PASSWORD"]})
+        inbox = self.api("contacts")
+        self.assertEqual(1,inbox["unread"])
+        self.assertEqual(ref,inbox["items"][0]["id"])
+        self.assertEqual("Deseo conocer la maqueta.",inbox["items"][0]["message"])
+        self.assertIsNone(inbox["items"][0]["read_at"])
+        self.api("contacts/"+ref+"/read", {})
+        self.api("contacts/"+ref+"/read", {})
+        self.assertEqual(0,self.api("contacts")["unread"])
+        self.api("contacts/"+"f"*16+"/read", {}, expect=404)
+        self.api("contacts?before=no-existe", expect=400)
+        self.stop_server()
+        self.start_server()
+        self.client = self.browser()
+        self.api("login", {"password":self.env["MONITOR_PASSWORD"]})
+        self.assertIsNotNone(self.api("contacts")["items"][0]["read_at"])
+        self.api("logout", {})
+        self.api("contacts", expect=401)
+
+    def test_bandeja_paginas_y_solicitudes_anteriores(self):
+        store = self.app.state.stores["real"]
+        for i in range(56):
+            store.contact(format(i,"016x"), {"name":"Registro "+str(i),
+                          "email":"visitante@example.org","message":"Prueba"})
+        self.api("login", {"password":self.env["MONITOR_PASSWORD"]})
+        first = self.api("contacts")
+        self.assertEqual(50,len(first["items"]))
+        self.assertEqual(56,first["unread"])
+        second = self.api("contacts?before="+first["next"])
+        self.assertEqual(6,len(second["items"]))
+        self.assertIsNone(second["next"])
+        self.assertFalse({r["id"] for r in first["items"]} & {r["id"] for r in second["items"]})
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

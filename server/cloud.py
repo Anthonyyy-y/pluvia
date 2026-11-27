@@ -10,6 +10,8 @@ from store import SCHEMA, Store
 
 
 def initialize(conn):
+    from contacts import initialize as initialize_contacts
+    initialize_contacts(conn)
     if conn.execute("SELECT to_regclass('public.pluvia_limits') AS table_name").fetchone()["table_name"]:
         return
     schema = SCHEMA.replace("id INTEGER PRIMARY KEY", "id BIGSERIAL PRIMARY KEY").replace(" REAL", " DOUBLE PRECISION")

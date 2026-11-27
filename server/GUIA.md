@@ -136,3 +136,11 @@ Las pruebas arrancan un servidor HTTP de bucle local en puertos efímeros con do
 ## Dos desagües y telemetría v2
 
 El mismo POST autenticado `/api/v1/telemetry` acepta v1 y v2. El firmware PluviaDos envía un sobre con `version=2`, `device_id`, `source`, `boot_id`, `seq`, `uptime_ms` y `lecturas` con D1 y D2 del mismo ciclo. Cada lectura contiene `ts` monotónico en ms, altura `valor` en cm, orden `bombaEstado`, `nivelEstanque` sin lectura (null), reserva estimada `reservaEstimadaS` en segundos, órdenes `motorEstado` y `compuertaAbierta`, estado de iluminación `luz` y `source`. Las lecturas inválidas y la reserva sin confirmar se expresan con null. Las rutas de histórico y CSV conservan datos anteriores y etiquetan sus sensores originales. El firmware sirve el mismo sobre por HTTP de sólo lectura en `/api/v1/lecturas` en la red local. El monitor estático puede leer este endpoint o Web Serial sin un backend.
+
+## Bandeja privada de solicitudes de demostración
+
+El formulario guarda cada solicitud en la base persistente antes de mostrar su referencia al visitante. La versión local utiliza SQLite y el despliegue de Vercel utiliza PostgreSQL.
+
+Abre `/solicitudes/` e ingresa con la contraseña de supervisión `MONITOR_PASSWORD`. Desde la bandeja puedes consultar nombre, correo, mensaje, fecha y referencia, marcar solicitudes como leídas y cargar las anteriores. El acceso a `GET /api/v1/contacts` y `POST /api/v1/contacts/{id}/read` exige la sesión de supervisión. El token del ESP32 carece de acceso a estas rutas. Las respuestas privadas utilizan `Cache-Control: no-store`.
+
+Los registros ya guardados siguen disponibles. Una tabla adicional conserva la marca de lectura. No hay borrado de solicitudes desde esta interfaz. El alcance solicitado consiste en conservarlas y consultarlas en la bandeja.

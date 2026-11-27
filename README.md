@@ -109,3 +109,7 @@ npm run probar:web
 Para el montaje físico quedan por comprobar la alimentación estable, las lecturas de ambos sensores con una regla, el caudal del filtro y la bomba y una recepción real del perfil v2. El diagnóstico previo del 23 de noviembre registró reinicios por baja tensión. Después de retirar la placa del protoboard se observó un LED estable. El monitor de producción seguía esperando la primera lectura. El montaje de dos desagües del 24 de noviembre fija 10 cm de altura útil de referencia y requiere calibración en cada recipiente.
 
 La carpeta `firmware/MonitoreoAgua`, su [prueba de regresión](firmware/probar.py), el [simulador HTTP por CLI](server/simulator.py) y el [ejemplo de paquete v1](server/telemetria.ejemplo.json) conservan el perfil anterior de tres estaciones. El receptor admite ese histórico y el panel lo identifica como perfil anterior. Para cargar la versión actual utiliza [PluviaDos](firmware/PluviaDos/LEEME.txt).
+
+## Consultar solicitudes de demostración
+
+El formulario de Contacto conserva los mensajes en la base de datos. La [bandeja privada del equipo](https://pluvia-mu.vercel.app/solicitudes/) se abre con la contraseña del monitor. Muestra fecha, nombre, correo del visitante, mensaje y referencia, y permite marcar cada solicitud como leída. Desde Contacto también se encuentra el enlace a esa bandeja. Las fotografías de construcción y montaje están incorporadas en Proceso de desarrollo.

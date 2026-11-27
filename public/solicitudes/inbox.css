@@ -1,0 +1,10 @@
+.monitor-main>h1{font-size:clamp(2rem,5vw,3.4rem);letter-spacing:-.05em;line-height:1.1;margin-bottom:18px}
+#inbox-login{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:25px}
+#inbox-login input{max-width:100%;min-height:42px;border:1px solid #a5b9aa;border-radius:6px;padding:7px}
+#inbox-status{margin-block:20px;min-height:1.4em}.inbox-tools{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-block:20px}.inbox-tools p{margin-right:auto}
+.request{border:1px solid #cedbce;background:white;border-radius:12px;padding:22px;margin:18px 0}
+.request h2{font-size:1.3rem;overflow-wrap:anywhere}.request time,.request .reference{display:block;color:#5b6d60;font-size:.85rem;margin-top:8px}
+.request-message{white-space:pre-wrap;overflow-wrap:anywhere;padding-block:18px;line-height:1.55}
+.request a{color:#1d6548;overflow-wrap:anywhere}.unread{border-left:5px solid #52814a}
+.read-status{margin-top:14px;color:#526655;font-size:.85rem}
+.skip{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.skip:focus{position:fixed;top:6px;left:6px;width:auto;height:auto;padding:10px;background:white;clip-path:none;z-index:99}

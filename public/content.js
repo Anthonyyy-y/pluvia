@@ -107,12 +107,22 @@ window.PLUVIA_CONTENT = {
   }
 ],
   "media": {
-    "components": "",
-    "assembly": "",
-    "tests": "",
-    "prototype": "",
-    "observations": ""
-  },
+  "components": "",
+  "assembly": "/assets/evidencias/montaje-electronico.webp",
+  "tests": "",
+  "prototype": "",
+  "observations": "",
+  "construction": [
+    {
+      "photo": "/assets/evidencias/construccion-superior.webp",
+      "caption": "Construcción de la maqueta. Vista superior de las dos cámaras conectadas por el tubo y la derivación central."
+    },
+    {
+      "photo": "/assets/evidencias/construccion-frontal.webp",
+      "caption": "Construcción de la maqueta. Soportes de las cámaras y unión en T antes de completar el ramal de filtrado y riego."
+    }
+  ]
+},
   "results": {
     "measurement": "",
     "method": "",
@@ -662,7 +672,7 @@ Object.assign(window.PLUVIA_CONTENT, {
        grid(item('Reproducir el ensayo','Inicia la simulación, confirma el depósito vacío con V y modifica la distancia de un sensor. Compara las indicaciones de la LCD y los LED de salida.'),item('Archivos del circuito','La descarga contiene el programa de simulación, diagram.json, las bibliotecas y las instrucciones.',link('/descargas/Wokwi_Pluvia.zip','Descargar proyecto Wokwi') + ' · ' + link('/descargas/diagram.json','Ver diagram.json'))),
     proceso: () => title('proceso') + story('Diseñar el recorrido.','Los planos digitales reúnen la planta de tuberías, el alzado frontal y la calle cubierta. La derivación a mitad del tubo A–B fija la posición del filtro y del estanque.', '<div class="digital-views">'+shot('/assets/superior-tuberias.svg','Vista superior de las tuberías y la derivación central.')+shot('/assets/frontal.svg','Vista frontal de los dos desagües.')+shot('/assets/urbano-planta.svg','Vista superior cubierta y zona verde.')+'</div>' ) +
         grid(item('Construcción','Preparar las dos cámaras y el tubo común, comprobar la derivación hacia el filtro y situar la salida de riego en la zona verde.'),item('Montaje electrónico','Adaptar las señales de eco, revisar las alimentaciones y conectar primero la placa y los sensores.',link('/descargas/Conexiones_Dos_Desagues.pdf','Consultar el cableado') + ' · ' + link('/descargas/alimentacion.png','Ver las fuentes de alimentación')),item('Programación y prueba','Comparar distancias con una regla, registrar el nivel de cada cámara y contrastar las órdenes del programa con el movimiento observado.')) +
-        titleIn('Registro del montaje.') + '<div class="wrap evidence-grid">'+[['components','Componentes físicos'],['assembly','Montaje electrónico'],['tests','Prueba con agua y regla'],['prototype','Producto terminado']].map(([k,n])=>evidence(k,n)).join('')+'</div>',
+        titleIn('Construcción de la maqueta.') + '<div class="wrap construction-gallery">'+c.media.construction.map(m=>shot(m.photo,m.caption)).join('')+'</div>' + titleIn('Registro del montaje.') + '<div class="wrap evidence-grid">'+[['components','Componentes físicos'],['assembly','Montaje electrónico'],['tests','Prueba con agua y regla'],['prototype','Producto terminado']].map(([k,n])=>evidence(k,k==='assembly'?'Montaje electrónico en proceso con protoboards, cableado y pantalla LCD.':n)).join('')+'</div>',
     tecnologia: () => title('tecnologia') + grid(item('PSeInt','El algoritmo didáctico del avance trabaja con un punto de monitoreo y valida las entradas antes de clasificar el nivel.',link('/descargas/MonitoreoPluvia.psc','Descargar pseudocódigo')),item('Java','La versión final procesa D1 y D2, valida entradas y prueba las reglas del controlador en consola.',link('/descargas/MonitoreoPluvia.java','Descargar código Java')),item('ESP32','El sketch de dos desagües integra sensores, compuerta, motor, riego y comunicaciones. Incluye las cabeceras de configuración.',link('/descargas/PluviaDos.zip','Descargar sketch de Arduino'))) +
         s.tech.replace('<h2>Del sensor <br />al navegador.</h2>','<h2>La arquitectura.</h2>') + '<div class="wrap resource-foot">'+link(links.github,'Ver el repositorio del equipo')+'</div>',
     resultados: () => title('resultados')+grid(item('Control de la maqueta','Las pruebas del controlador verifican las órdenes de la compuerta, el motor y el riego con entradas de ensayo.'),item('Software Java','La suite del avance final registra 15 comprobaciones de control y cuatro escenarios de consola. Son resultados de pruebas de software.'),item('Prueba física','El 23 de noviembre se observaron reinicios de la placa por baja tensión. La comprobación de ese día encontró el monitor real a la espera de su primera muestra.'))+
@@ -670,7 +680,7 @@ Object.assign(window.PLUVIA_CONTENT, {
       grid(item('Aplicaciones','Supervisión de puntos críticos de drenaje, orientación de inspecciones y riego demostrativo de áreas verdes.'),item('Limitaciones','Una altura elevada puede tener varias causas. La reserva se estima por tiempo de riego. Falta medir cuánta agua entra y sale en la instalación.'),item('Mejoras previstas','Incorporar realimentación del movimiento, medir directamente el estanque y evaluar notificaciones en segundo plano.')),
     equipo: () => title('equipo') + '<p class="wrap role-note">Distribución de responsabilidades propuesta para la presentación del proyecto.</p>' + '<section class="wrap team-grid">'+c.team.map(m=>`<article class="member">${m.photo?'<img class="portrait" alt="'+escape(m.name)+'" src="'+escape(m.photo)+'">':'<div class="portrait missing"><span class="initials" aria-hidden="true">'+escape(m.name.split(' ').map(w=>w[0]).join(''))+'</span><small>TEMPORAL – reemplazar</small></div>'}<h2>${escape(m.name)}</h2><p>${escape(m.role||'TEMPORAL – reemplazar · Función en el proyecto')}</p>${m.github?'<small>GitHub · '+escape(m.github)+'</small>':''}</article>`).join('')+'</section>',
     contacto: () => title('contacto')+s.contact.replace('<h2>Conoce el prototipo.</h2>','<h2>Solicita una demostración.</h2>')+s.dialog+
-      '<section class="wrap contact-directory"><div><h2>Pluvia.</h2><p>Correo de contacto</p>'+ (c.contactEmail?link('mailto:'+c.contactEmail,c.contactEmail):'<span class="pending-text">TEMPORAL – reemplazar</span>')+'<p>Enlaces del proyecto</p>'+[link(links.github,'Repositorio del equipo'),link(links.wokwi,'Simulación electrónica'),...c.socialLinks.map(x=>link(x.url,x.label))].join(' ')+'</div>'+shot('/descargas/qr-pluvia.png','Escanea el QR para abrir el sitio público.','qr-figure')+'</section>'
+      '<section class="wrap contact-directory"><div><h2>Pluvia.</h2><p>Correo de contacto</p>'+ (c.contactEmail?link('mailto:'+c.contactEmail,c.contactEmail):'<span>Utiliza el formulario para contactar con Pluvia.</span>')+'<p>Enlaces del proyecto</p>'+[link(links.github,'Repositorio del equipo'),link(links.wokwi,'Simulación electrónica'),link('/solicitudes/','Bandeja privada del equipo'),...c.socialLinks.map(x=>link(x.url,x.label))].join(' ')+'</div>'+shot('/descargas/qr-pluvia.png','Escanea el QR para abrir el sitio público.','qr-figure')+'</section>'
   };
 })();
 
